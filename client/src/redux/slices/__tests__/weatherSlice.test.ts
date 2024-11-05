@@ -16,11 +16,22 @@ const mockAxios = new MockAdapter(axiosInstance);
 describe("weatherSlice", () => {
   const initialState: WeatherState = {
     current: {
-      data: null,
+      data: {
+        location: "",
+        temperature: 0,
+        humidity: 0,
+        windSpeed: 0,
+        condition: "Unknown",
+      },
       status: "idle",
     },
     forecast: {
-      data: null,
+      data: {
+        hourly: {
+          time: [],
+          temperature2m: {},
+        },
+      },
       status: "idle",
     },
     error: null,
@@ -43,7 +54,6 @@ describe("weatherSlice", () => {
     );
   });
 
-  // Tests for fetchCurrentWeatherData
   it("handles fetchCurrentWeatherData pending", () => {
     const action = { type: fetchCurrentWeatherData.pending.type };
     const state = weatherReducer(initialState, action);
@@ -81,11 +91,16 @@ describe("weatherSlice", () => {
 
     const state = store.getState().weather;
     expect(state.current.status).toBe("failed");
-    expect(state.current.data).toBeNull();
+    expect(state.current.data).toEqual({
+      location: "",
+      temperature: 0,
+      humidity: 0,
+      windSpeed: 0,
+      condition: "Unknown",
+    });
     expect(state.error).toBe("Internal Server Error");
   });
 
-  // Tests for fetchLocationBasedForecastWeatherData
   it("handles fetchLocationBasedForecastWeatherData pending", () => {
     const action = { type: fetchLocationBasedForecastWeatherData.pending.type };
     const state = weatherReducer(initialState, action);
@@ -143,7 +158,12 @@ describe("weatherSlice", () => {
 
     const state = store.getState().weather;
     expect(state.forecast.status).toBe("failed");
-    expect(state.forecast.data).toBeNull();
+    expect(state.forecast.data).toEqual({
+      hourly: {
+        time: [],
+        temperature2m: {},
+      },
+    });
     expect(state.error).toBe("Forecast data not found");
   });
 });

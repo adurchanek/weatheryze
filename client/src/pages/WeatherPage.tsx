@@ -64,7 +64,7 @@ const WeatherPage: React.FC = () => {
 
   useEffect(() => {
     if (favorites.status === "failed") {
-      console.error("Failed to load favorites data.");
+      dispatch(setError("Error fetching weather data"));
     }
   }, [favorites.status]);
 

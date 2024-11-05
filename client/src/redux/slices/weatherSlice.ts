@@ -7,14 +7,25 @@ import {
   CoordinatesParams,
 } from "../../types/weather";
 
-// Initial state with separate sections for current and forecast data
+// Initial state with default values for current and forecast data
 const initialState: WeatherState = {
   current: {
-    data: null,
+    data: {
+      location: "",
+      temperature: 0,
+      humidity: 0,
+      windSpeed: 0,
+      condition: "Unknown",
+    },
     status: "idle",
   },
   forecast: {
-    data: null,
+    data: {
+      hourly: {
+        time: [],
+        temperature2m: {},
+      },
+    },
     status: "idle",
   },
   error: null,
@@ -30,7 +41,6 @@ export const fetchCurrentWeatherData = createAsyncThunk(
       );
       return response.data;
     } catch (error: any) {
-      // Return a rejected value with the error message for better error handling
       return rejectWithValue(
         error.response?.data?.message || error.message || "Unknown error",
       );
@@ -38,18 +48,19 @@ export const fetchCurrentWeatherData = createAsyncThunk(
   },
 );
 
-//http://localhost:5002/api/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=America/New_York
 // Async thunk to fetch forecast weather data
 export const fetchLocationBasedForecastWeatherData = createAsyncThunk<
-  ForecastData, // Return type
-  CoordinatesParams, // Argument type
-  { rejectValue: string } // Rejected value type
+  ForecastData,
+  CoordinatesParams,
+  { rejectValue: string }
 >(
   "weather/fetchLocationBasedForecastWeatherData",
   async ({ latitude, longitude, timezone }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get<ForecastData>(
-        `/weather/forecast?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&timezone=${encodeURIComponent(timezone)}`,
+        `/weather/forecast?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(
+          longitude,
+        )}&timezone=${encodeURIComponent(timezone)}`,
       );
       return response.data;
     } catch (error: any) {
@@ -66,7 +77,6 @@ const weatherSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // Handle fetchCurrentWeatherData
     builder
       .addCase(fetchCurrentWeatherData.pending, (state) => {
         state.current.status = "loading";
@@ -82,9 +92,15 @@ const weatherSlice = createSlice({
       .addCase(fetchCurrentWeatherData.rejected, (state, action) => {
         state.current.status = "failed";
         state.error = action.payload as string;
+        state.current.data = {
+          location: "",
+          temperature: 0,
+          humidity: 0,
+          windSpeed: 0,
+          condition: "Unknown",
+        };
       });
 
-    // Handle fetchLocationBasedForecastWeatherData
     builder
       .addCase(fetchLocationBasedForecastWeatherData.pending, (state) => {
         state.forecast.status = "loading";
@@ -102,6 +118,12 @@ const weatherSlice = createSlice({
         (state, action) => {
           state.forecast.status = "failed";
           state.error = action.payload as string;
+          state.forecast.data = {
+            hourly: {
+              time: [],
+              temperature2m: {},
+            },
+          };
         },
       );
   },

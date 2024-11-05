@@ -4,7 +4,7 @@ import "@testing-library/jest-dom";
 import Navbar from "../Navbar";
 import { Provider } from "react-redux";
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
-import userReducer, { UserState, logout } from "../../redux/slices/userSlice";
+import userReducer, { UserState } from "../../redux/slices/userSlice";
 import { MemoryRouter } from "react-router-dom";
 
 interface MinimalRootState {
@@ -42,9 +42,12 @@ describe("Navbar", () => {
       </Provider>,
     );
 
-    expect(screen.getByText(/Home/i)).toBeInTheDocument();
-    expect(screen.getByText(/Login/i)).toBeInTheDocument();
-    expect(screen.getByText(/Register/i)).toBeInTheDocument();
+    // Verify that 'Home' link appears twice (desktop and mobile)
+    expect(screen.getAllByText(/Home/i)).toHaveLength(2);
+
+    // Check for 'Login' and 'Register' links
+    expect(screen.getAllByText(/Login/i)).toHaveLength(2); // Desktop and mobile versions
+    expect(screen.getAllByText(/Register/i)).toHaveLength(2);
     expect(screen.queryByText(/Favorites/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Logout/i)).not.toBeInTheDocument();
   });
@@ -63,10 +66,13 @@ describe("Navbar", () => {
       </Provider>,
     );
 
-    expect(screen.getByText(/Home/i)).toBeInTheDocument();
-    expect(screen.getByText(/Favorites/i)).toBeInTheDocument();
-    expect(screen.getByText(/Welcome, John Doe/i)).toBeInTheDocument();
-    expect(screen.getByText(/Logout/i)).toBeInTheDocument();
+    // Verify that 'Home' link appears twice (desktop and mobile)
+    expect(screen.getAllByText(/Home/i)).toHaveLength(2);
+
+    // Check for 'Favorites' and 'Logout' links
+    expect(screen.getAllByText(/Favorites/i)).toHaveLength(2); // Desktop and mobile versions
+    expect(screen.getAllByText(/Welcome, John Doe/i)).toHaveLength(2); // Desktop and mobile versions
+    expect(screen.getAllByText(/Logout/i)).toHaveLength(2); // Desktop and mobile versions
     expect(screen.queryByText(/Login/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Register/i)).not.toBeInTheDocument();
   });
@@ -85,9 +91,9 @@ describe("Navbar", () => {
       </Provider>,
     );
 
-    const logoutButton = screen.getByText(/Logout/i);
+    const logoutButtons = screen.getAllByText(/Logout/i);
     act(() => {
-      fireEvent.click(logoutButton);
+      fireEvent.click(logoutButtons[0]); // Click the first logout button (usually desktop view)
     });
 
     // Check if logout action was dispatched

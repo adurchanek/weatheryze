@@ -133,14 +133,14 @@ const Navbar: React.FC = () => {
             <>
               <Link
                 to="/login"
-                className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 mt-2"
+                className="text-gray-700 hover:text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 mt-2"
+                className="text-gray-700 hover:text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Register

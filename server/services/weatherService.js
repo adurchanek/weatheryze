@@ -5,13 +5,6 @@ const fetchWeather = async (req) => {
     // Define the base URL and the required parameters for the API call
     const url = "https://api.open-meteo.com/v1/forecast";
 
-    // const params = {
-    //   latitude: 42.8142,
-    //   longitude: -73.9396,
-    //   hourly: "temperature_2m",
-    //   timezone: "America/New_York",
-    // };
-
     const params = {
       latitude: req.latitude,
       longitude: req.longitude,

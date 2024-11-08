@@ -13,7 +13,7 @@ export interface LocationsSuggestionsData {
 
 // Types for argument structure
 export interface LocationSearchParams {
-  searchLocation: string;
+  query: string;
   limit: number;
 }
 

@@ -21,10 +21,10 @@ export const fetchLocationsSuggestionsData = createAsyncThunk<
   { rejectValue: string }
 >(
   "location/fetchLocationsSuggestionsData",
-  async ({ searchLocation, limit }, { rejectWithValue }) => {
+  async ({ query, limit }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get<LocationsSuggestionsData>(
-        `/location/suggest?searchInput=${encodeURIComponent(searchLocation)}&limit=${encodeURIComponent(
+        `/location/suggest?query=${encodeURIComponent(query)}&limit=${encodeURIComponent(
           limit,
         )}`,
       );

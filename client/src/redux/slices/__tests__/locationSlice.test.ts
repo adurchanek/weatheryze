@@ -51,18 +51,18 @@ describe("locationsSlice", () => {
       const locations: LocationsSuggestionsData = {
         locations: [
           {
-            latitude: -100,
-            longitude: 100,
+            latitude: 42.8142,
+            longitude: -73.9396,
             name: "New York",
-            id: "456",
+            id: "1",
             country: "United States",
             zip: "00000",
           },
           {
-            latitude: -200,
-            longitude: 200,
-            name: "New Jersey",
-            id: "456",
+            latitude: 12.8142,
+            longitude: 73.9396,
+            name: "Newark",
+            id: "2",
             country: "United States",
             zip: "11111",
           },
@@ -70,12 +70,12 @@ describe("locationsSlice", () => {
       };
 
       mockAxios
-        .onGet("/location/suggest?searchInput=New&limit=3")
+        .onGet("/location/suggest?query=New&limit=3")
         .reply(200, locations);
 
       await store.dispatch(
         fetchLocationsSuggestionsData({
-          searchLocation: "New",
+          query: "New",
           limit: 3,
         }) as any,
       );
@@ -92,7 +92,7 @@ describe("locationsSlice", () => {
 
       await store.dispatch(
         fetchLocationsSuggestionsData({
-          searchLocation: "New",
+          query: "New",
           limit: 2,
         }) as any,
       );

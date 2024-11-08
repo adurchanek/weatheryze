@@ -5,7 +5,6 @@ import {
   waitFor,
   fireEvent,
   act,
-  within,
 } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import WeatherPage from "../WeatherPage";
@@ -72,7 +71,7 @@ describe("WeatherPage", () => {
       .reply(() => new Promise(() => {}));
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=America%2FNew_York",
+        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
       )
       .reply(() => new Promise(() => {}));
 
@@ -107,7 +106,7 @@ describe("WeatherPage", () => {
       .reply(200, currentWeatherData);
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=America%2FNew_York",
+        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
       )
       .reply(200, forecastData);
 
@@ -131,7 +130,7 @@ describe("WeatherPage", () => {
 
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=America%2FNew_York",
+        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
       )
       .reply(500, {
         message: errorMessage,
@@ -175,7 +174,7 @@ describe("WeatherPage", () => {
       .reply(200, weatherData);
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=America%2FNew_York",
+        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
       )
       .reply(200, forecastData);
     mockAxios.onGet("/weather/favorites").reply(200, []);
@@ -228,7 +227,7 @@ describe("WeatherPage", () => {
       .reply(200, weatherData);
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=America%2FNew_York",
+        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
       )
       .reply(200, forecastData);
     mockAxios.onGet("/weather/favorites").reply(200, []);
@@ -288,7 +287,7 @@ describe("WeatherPage", () => {
       .reply(200, currentWeatherData);
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=America%2FNew_York",
+        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
       )
       .reply(200, forecastData);
     mockAxios.onGet("/weather/favorites").reply(200, []);

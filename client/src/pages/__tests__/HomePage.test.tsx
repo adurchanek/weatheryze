@@ -3,13 +3,17 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import HomePage from "../HomePage";
 import { MemoryRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "../../redux/store";
 
 describe("HomePage", () => {
   it("renders the home page heading and the SearchBar component", () => {
     render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>,
+      <Provider store={store}>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </Provider>,
     );
 
     // Verify the main heading is rendered

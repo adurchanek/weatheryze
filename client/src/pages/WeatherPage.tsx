@@ -44,7 +44,7 @@ const WeatherPage: React.FC = () => {
         fetchLocationBasedForecastWeatherData({
           latitude: 42.8142,
           longitude: -73.9396,
-          timezone: "America/New_York",
+          timezone: "auto",
         }),
       );
     }

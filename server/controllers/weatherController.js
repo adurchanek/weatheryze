@@ -41,13 +41,6 @@ export const getCurrentWeather = async (req, res) => {
 export const getForecast = async (req, res) => {
   const { latitude, longitude, timezone } = req.query;
 
-  // const params = {
-  //   latitude: 42.8142,
-  //   longitude: -73.9396,
-  //   hourly: "temperature_2m",
-  //   timezone: "America/New_York",
-  // };
-
   if (!latitude || !longitude || !timezone) {
     return res.status(400).json({ msg: "Location and timezone are required" });
   }

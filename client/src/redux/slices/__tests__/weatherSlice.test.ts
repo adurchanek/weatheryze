@@ -121,7 +121,7 @@ describe("weatherSlice", () => {
 
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=America%2FNew_York",
+        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
       )
       .reply(200, forecastData);
 
@@ -129,7 +129,7 @@ describe("weatherSlice", () => {
       fetchLocationBasedForecastWeatherData({
         latitude: 42.8142,
         longitude: -73.9396,
-        timezone: "America/New_York",
+        timezone: "auto",
       }) as any,
     );
 
@@ -142,7 +142,7 @@ describe("weatherSlice", () => {
   it("handles fetchLocationBasedForecastWeatherData rejected", async () => {
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=America%2FNew_York",
+        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
       )
       .reply(404, {
         message: "Forecast data not found",
@@ -152,7 +152,7 @@ describe("weatherSlice", () => {
       fetchLocationBasedForecastWeatherData({
         latitude: 42.8142,
         longitude: -73.9396,
-        timezone: "America/New_York",
+        timezone: "auto",
       }) as any,
     );
 

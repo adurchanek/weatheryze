@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 
-import authRoutes from "./routes/auth.js"; // Note the `.js` extension
-import weatherRoutes from "./routes/weather.js"; // Note the `.js` extension
+import authRoutes from "./routes/auth.js";
+import weatherRoutes from "./routes/weather.js";
+import locationRoutes from "./routes/location.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/weather", weatherRoutes);
+app.use("/api/location", locationRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend server is running");

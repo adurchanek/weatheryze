@@ -11,7 +11,7 @@ import SearchBar from "../SearchBar";
 import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "../../redux/store";
-import { LocationsSuggestionsData } from "../../types/location";
+import { Location } from "../../types/location";
 import axiosInstance from "../../services/axiosInstance";
 import MockAdapter from "axios-mock-adapter";
 
@@ -89,26 +89,24 @@ describe("SearchBar", () => {
   });
 
   it("displays suggested locations after successful fetch", async () => {
-    const locations: LocationsSuggestionsData = {
-      locations: [
-        {
-          latitude: 42.8142,
-          longitude: -73.9396,
-          name: "New York",
-          id: "1",
-          country: "United States",
-          zip: "00000",
-        },
-        {
-          latitude: 12.8142,
-          longitude: 73.9396,
-          name: "Newark",
-          id: "2",
-          country: "United States",
-          zip: "11111",
-        },
-      ],
-    };
+    const locations: Location[] = [
+      {
+        latitude: 42.8142,
+        longitude: -73.9396,
+        name: "New York",
+        id: "1",
+        country: "United States",
+        zip: "00000",
+      },
+      {
+        latitude: 12.8142,
+        longitude: 73.9396,
+        name: "Newark",
+        id: "2",
+        country: "United States",
+        zip: "11111",
+      },
+    ];
 
     mockAxios
       .onGet("/location/suggest?query=New&limit=5")

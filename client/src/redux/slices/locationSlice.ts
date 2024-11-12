@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axiosInstance from "../../services/axiosInstance";
 import {
-  LocationsSuggestionsData,
+  Location,
   LocationSearchParams,
   LocationState,
 } from "../../types/location";
 
 const initialState: LocationState = {
-  locations: {
+  suggestions: {
     data: null,
     status: "idle",
   },
@@ -16,14 +16,14 @@ const initialState: LocationState = {
 
 // Async thunk to fetch forecast location suggestion data
 export const fetchLocationsSuggestionsData = createAsyncThunk<
-  LocationsSuggestionsData,
+  Location[],
   LocationSearchParams,
   { rejectValue: string }
 >(
   "location/fetchLocationsSuggestionsData",
   async ({ query, limit }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get<LocationsSuggestionsData>(
+      const response = await axiosInstance.get<Location[]>(
         `/location/suggest?query=${encodeURIComponent(query)}&limit=${encodeURIComponent(
           limit,
         )}`,
@@ -44,20 +44,20 @@ const locationSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchLocationsSuggestionsData.pending, (state) => {
-        state.locations.status = "loading";
+        state.suggestions.status = "loading";
         state.error = null;
       })
       .addCase(
         fetchLocationsSuggestionsData.fulfilled,
-        (state, action: PayloadAction<LocationsSuggestionsData>) => {
-          state.locations.status = "succeeded";
-          state.locations.data = action.payload;
+        (state, action: PayloadAction<Location[]>) => {
+          state.suggestions.status = "succeeded";
+          state.suggestions.data = action.payload;
         },
       )
       .addCase(fetchLocationsSuggestionsData.rejected, (state, action) => {
-        state.locations.status = "failed";
+        state.suggestions.status = "failed";
         state.error = action.payload as string;
-        state.locations.data = null;
+        state.suggestions.data = null;
       });
   },
 });

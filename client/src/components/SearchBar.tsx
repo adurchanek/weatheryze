@@ -8,8 +8,8 @@ const SearchBar: React.FC = () => {
   const [location, setLocation] = useState("");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const suggestions: Location[] | undefined = useAppSelector(
-    (state) => state.locations?.locations?.data?.locations,
+  const suggestions: Location[] | null = useAppSelector(
+    (state) => state.locations?.suggestions?.data,
   );
 
   const handleSearch = (e: React.FormEvent) => {

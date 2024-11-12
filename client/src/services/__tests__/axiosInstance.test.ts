@@ -46,7 +46,7 @@ const defaultErrorState: ErrorState = {
 };
 
 const defaultLocationState: LocationState = {
-  locations: {
+  suggestions: {
     data: null,
     status: "idle",
   },

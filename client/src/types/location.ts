@@ -7,10 +7,6 @@ export interface Location {
   zip: string;
 }
 
-export interface LocationsSuggestionsData {
-  locations: Location[];
-}
-
 // Types for argument structure
 export interface LocationSearchParams {
   query: string;
@@ -18,8 +14,8 @@ export interface LocationSearchParams {
 }
 
 export interface LocationState {
-  locations: {
-    data: LocationsSuggestionsData | null;
+  suggestions: {
+    data: Location[] | null;
     status: "idle" | "loading" | "succeeded" | "failed";
   };
   error: string | null;

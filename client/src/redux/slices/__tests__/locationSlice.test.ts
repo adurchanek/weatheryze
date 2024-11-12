@@ -5,17 +5,14 @@ import axiosInstance from "../../../services/axiosInstance";
 import { configureStore, Store } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import MockAdapter from "axios-mock-adapter";
-import {
-  LocationsSuggestionsData,
-  LocationState,
-} from "../../../types/location";
+import { Location, LocationState } from "../../../types/location";
 
 // Mock axiosInstance
 const mockAxios = new MockAdapter(axiosInstance);
 
 describe("locationsSlice", () => {
   const initialState: LocationState = {
-    locations: {
+    suggestions: {
       data: null,
       status: "idle",
     },
@@ -44,30 +41,28 @@ describe("locationsSlice", () => {
     it("should handle fetchLocationsSuggestionsData pending", () => {
       const action = { type: fetchLocationsSuggestionsData.pending.type };
       const state = locationsReducer(initialState, action);
-      expect(state.locations.status).toBe("loading");
+      expect(state.suggestions.status).toBe("loading");
     });
 
     it("should handle fetchLocationsSuggestionsData fulfilled", async () => {
-      const locations: LocationsSuggestionsData = {
-        locations: [
-          {
-            latitude: 42.8142,
-            longitude: -73.9396,
-            name: "New York",
-            id: "1",
-            country: "United States",
-            zip: "00000",
-          },
-          {
-            latitude: 12.8142,
-            longitude: 73.9396,
-            name: "Newark",
-            id: "2",
-            country: "United States",
-            zip: "11111",
-          },
-        ],
-      };
+      const locations: Location[] = [
+        {
+          latitude: 42.8142,
+          longitude: -73.9396,
+          name: "New York",
+          id: "1",
+          country: "United States",
+          zip: "00000",
+        },
+        {
+          latitude: 12.8142,
+          longitude: 73.9396,
+          name: "Newark",
+          id: "2",
+          country: "United States",
+          zip: "11111",
+        },
+      ];
 
       mockAxios
         .onGet("/location/suggest?query=New&limit=3")
@@ -81,8 +76,8 @@ describe("locationsSlice", () => {
       );
 
       const state = store.getState().locations;
-      expect(state.locations.status).toBe("succeeded");
-      expect(state.locations.data).toEqual(locations);
+      expect(state.suggestions.status).toBe("succeeded");
+      expect(state.suggestions.data).toEqual(locations);
     });
 
     it("should handle fetchLocationsSuggestionsData rejected", async () => {
@@ -98,8 +93,8 @@ describe("locationsSlice", () => {
       );
 
       const state = store.getState().locations;
-      expect(state.locations.status).toBe("failed");
-      expect(state.locations.data).toBeNull();
+      expect(state.suggestions.status).toBe("failed");
+      expect(state.suggestions.data).toBeNull();
     });
   });
 });

@@ -10,12 +10,6 @@ const dummyWeatherData = {
   windSpeed: 10,
 };
 
-const dummyLocations = [
-  { id: "1", name: "New York", country: "USA" },
-  { id: "2", name: "London", country: "UK" },
-  { id: "3", name: "Tokyo", country: "Japan" },
-];
-
 // @desc    Get current weather data for a location
 // @route   GET /api/weather/current
 // @access  Public
@@ -55,27 +49,6 @@ export const getForecast = async (req, res) => {
   try {
     const data = await fetchWeather(request);
     res.json(data);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-};
-
-// @desc    Search for locations
-// @route   GET /api/weather/search
-// @access  Public
-export const searchLocations = async (req, res) => {
-  const { query } = req.query;
-
-  if (!query) {
-    return res.status(400).json({ msg: "Search query is required" });
-  }
-
-  try {
-    const locations = dummyLocations.filter((loc) =>
-      loc.name.toLowerCase().includes(query.toLowerCase()),
-    );
-    res.json(locations);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");

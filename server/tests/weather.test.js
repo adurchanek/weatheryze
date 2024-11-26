@@ -74,26 +74,6 @@ describe("Weather Routes", () => {
     });
   });
 
-  describe("GET /api/weather/search", () => {
-    it("should return a list of locations matching the query", async () => {
-      const res = await request(app)
-        .get("/api/weather/search")
-        .query({ query: "New" });
-
-      expect(res.statusCode).toBe(200);
-      expect(res.body.length).toBeGreaterThan(0);
-      expect(res.body[0]).toHaveProperty("name");
-      expect(res.body[0]).toHaveProperty("country");
-    });
-
-    it("should return an error if query is not provided", async () => {
-      const res = await request(app).get("/api/weather/search");
-
-      expect(res.statusCode).toBe(400);
-      expect(res.body.msg).toBe("Search query is required");
-    });
-  });
-
   describe("POST /api/weather/favorites", () => {
     it("should save a favorite location", async () => {
       const res = await request(app)

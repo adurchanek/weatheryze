@@ -18,7 +18,6 @@ const Navbar: React.FC = () => {
         <div className="flex items-center space-x-4">
           <Link to="/" className="flex items-center space-x-2">
             <img src="/icon-3.svg" alt="Sun Icon" className="w-8 h-8" />{" "}
-            {/*<span className="text-xl font-semibold text-blue-600 hover:text-blue-700">*/}
             <span
               className="text-xl font-semibold bg-clip-text
             text-transparent bg-gradient-to-br from-blue-400 via-purple-400

@@ -3,7 +3,6 @@ import { check } from "express-validator";
 import {
   getCurrentWeather,
   getForecast,
-  searchLocations,
   saveFavoriteLocation,
   getFavoriteLocations,
   deleteFavoriteLocation,
@@ -21,11 +20,6 @@ router.get("/current", getCurrentWeather);
 // @desc    Get forecast weather data for a location
 // @access  Public
 router.get("/forecast", getForecast);
-
-// @route   GET /api/weather/search
-// @desc    Search for locations
-// @access  Public
-router.get("/search", searchLocations);
 
 // @route   POST /api/weather/favorites
 // @desc    Save a favorite location

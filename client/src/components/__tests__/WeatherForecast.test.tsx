@@ -1,35 +1,47 @@
 import React from "react";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-// **Step 1:** Mock Recharts components before importing WeatherForecast
+// Mock Recharts components before importing WeatherForecast
 jest.mock("recharts", () => {
   return {
     ResponsiveContainer: ({ children }: any) => (
       <div data-testid="responsive-container">{children}</div>
     ),
-    LineChart: ({ children }: any) => (
-      <svg data-testid="line-chart">{children}</svg>
+    AreaChart: ({ children }: any) => (
+      <svg data-testid="area-chart">{children}</svg>
     ),
-    Line: () => <path data-testid="line" />,
+    Area: () => <path data-testid="area" />,
     XAxis: () => <g data-testid="x-axis" />,
     YAxis: () => <g data-testid="y-axis" />,
     Tooltip: () => <div data-testid="tooltip" />,
     CartesianGrid: () => <line data-testid="cartesian-grid" />,
+    ReferenceLine: ({ x, label }: { x: string; label: any }) => (
+      <line
+        data-testid="reference-line"
+        data-x={x}
+        aria-label={label?.value || "Reference Line"}
+      />
+    ),
   };
 });
 
-// **Step 2:** Now import the WeatherForecast component
+// Import the WeatherForecast component
 import WeatherForecast from "../WeatherForecast";
 import { ForecastData } from "../../types/weather";
 
 describe("WeatherForecast", () => {
   const forecastDataWithData: ForecastData = {
     hourly: {
-      time: ["2024-10-30T00:00:00.000Z", "2024-10-30T01:00:00.000Z"],
+      time: [
+        "2024-10-30T00:00:00.000Z",
+        "2024-10-30T01:00:00.000Z",
+        "2024-10-30T02:00:00.000Z",
+      ],
       temperature2m: {
         "0": 20.0,
         "1": 19.5,
+        "2": 18.5,
       },
     },
   };
@@ -41,7 +53,17 @@ describe("WeatherForecast", () => {
     },
   };
 
-  it("renders the forecast chart with correct data", async () => {
+  beforeEach(() => {
+    // Mock the system time to match the nearest data point
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2024-10-30T00:30:00.000Z")); // Adjusted to align with nearest data point
+  });
+
+  afterEach(() => {
+    jest.useRealTimers(); // Reset timers after each test
+  });
+
+  it("renders the forecast chart with correct data and ReferenceLine", () => {
     render(<WeatherForecast forecastData={forecastDataWithData} />);
 
     // Check for the heading
@@ -57,21 +79,31 @@ describe("WeatherForecast", () => {
     );
     expect(responsiveContainer).toBeInTheDocument();
 
-    // Within responsive-container, find the mocked LineChart
-    const lineChart = within(responsiveContainer).getByTestId("line-chart");
-    expect(lineChart).toBeInTheDocument();
+    // Within responsive-container, find the mocked AreaChart
+    const areaChart = within(responsiveContainer).getByTestId("area-chart");
+    expect(areaChart).toBeInTheDocument();
 
-    // Check for Line components within LineChart
-    const lines = within(lineChart).getAllByTestId("line");
-    expect(lines.length).toBeGreaterThan(0);
+    // Check for Area components within AreaChart
+    const areas = within(areaChart).getAllByTestId("area");
+    expect(areas.length).toBeGreaterThan(0);
 
     // Check for XAxis and YAxis
-    expect(within(lineChart).getByTestId("x-axis")).toBeInTheDocument();
-    expect(within(lineChart).getByTestId("y-axis")).toBeInTheDocument();
+    expect(within(areaChart).getByTestId("x-axis")).toBeInTheDocument();
+    expect(within(areaChart).getByTestId("y-axis")).toBeInTheDocument();
 
     // Check for Tooltip and CartesianGrid
-    expect(within(lineChart).getByTestId("tooltip")).toBeInTheDocument();
-    expect(within(lineChart).getByTestId("cartesian-grid")).toBeInTheDocument();
+    expect(within(areaChart).getByTestId("tooltip")).toBeInTheDocument();
+    expect(within(areaChart).getByTestId("cartesian-grid")).toBeInTheDocument();
+
+    // Check for the ReferenceLine
+    const referenceLine = within(areaChart).getByTestId("reference-line");
+    expect(referenceLine).toBeInTheDocument();
+
+    // Ensure the ReferenceLine points to the closest data point
+    expect(referenceLine).toHaveAttribute(
+      "data-x",
+      "2024-10-30T00:00:00.000Z", // Adjusted to match the nearest timestamp
+    );
   });
 
   it("handles empty forecast data gracefully", () => {

@@ -12,7 +12,7 @@ export interface UserState {
   isAuthenticated: boolean;
   userInfo: UserInfo | null;
   token: string | null;
-  loading: boolean; // New loading state
+  loading: boolean;
 }
 
 const initialState: UserState = {
@@ -64,4 +64,5 @@ export const {
   loadUser,
   loadUserFailure,
 } = userSlice.actions;
+
 export default userSlice.reducer;

@@ -19,7 +19,6 @@ import thunk from "redux-thunk";
 import axiosInstance from "../../services/axiosInstance";
 import MockAdapter from "axios-mock-adapter";
 
-// Initialize Mock Adapter for axios
 const mockAxios = new MockAdapter(axiosInstance);
 
 // Mock useNavigate from react-router-dom

@@ -47,7 +47,7 @@ describe("userSlice", () => {
     const expectedState = {
       isAuthenticated: true,
       userInfo,
-      token: null, // Token remains unchanged
+      token: null,
       loading: false,
     };
     expect(userReducer(previousState, action)).toEqual(expectedState);

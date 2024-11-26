@@ -1,6 +1,7 @@
 import weatherReducer, {
   fetchCurrentWeatherData,
   fetchLocationBasedForecastWeatherData,
+  setCurrentLocation,
 } from "../weatherSlice";
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
 import MockAdapter from "axios-mock-adapter";
@@ -10,6 +11,7 @@ import {
   ForecastData,
   WeatherState,
 } from "../../../types/weather";
+import { Location } from "../../../types/location";
 
 const mockAxios = new MockAdapter(axiosInstance);
 
@@ -34,6 +36,7 @@ describe("weatherSlice", () => {
       },
       status: "idle",
     },
+    currentLocation: null,
     error: null,
   };
 
@@ -52,6 +55,25 @@ describe("weatherSlice", () => {
     expect(weatherReducer(undefined, { type: undefined })).toEqual(
       initialState,
     );
+  });
+
+  it("handles setCurrentLocation", () => {
+    const mockLocation: Location = {
+      id: "NewYork-NY",
+      name: "New York",
+      latitude: 40.7128,
+      longitude: -74.006,
+      country: "USA",
+      countryCode: "US",
+      state: "New York",
+      stateCode: "NY",
+      zip: "10001",
+    };
+
+    const action = setCurrentLocation(mockLocation);
+    const state = weatherReducer(initialState, action);
+
+    expect(state.currentLocation).toEqual(mockLocation);
   });
 
   it("handles fetchCurrentWeatherData pending", () => {

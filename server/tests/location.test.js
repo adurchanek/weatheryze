@@ -1,80 +1,155 @@
-import "dotenv/config";
 import request from "supertest";
-import mongoose from "mongoose";
-import { MongoMemoryServer } from "mongodb-memory-server";
 import app from "../app.js";
-import User from "../models/User.js";
-import FavoriteLocation from "../models/FavoriteLocation.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { jest } from "@jest/globals";
+import fetchLocations from "../services/locationService.js";
 
-let mongoServer;
-let token;
-let userId;
-
-beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  await mongoose.connect(uri);
-});
-
-afterEach(async () => {
-  await User.deleteMany();
-  await FavoriteLocation.deleteMany();
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-});
+// Mock the fetchLocations service
+jest.mock("../services/locationService.js");
 
 describe("Location Routes", () => {
-  beforeEach(async () => {
-    // Create a user and obtain a JWT token
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash("password123", salt);
-
-    // Use a unique email for each test run
-    const uniqueEmail = `testuser_${Date.now()}@example.com`;
-
-    const user = await User.create({
-      name: "Test User",
-      email: uniqueEmail,
-      password: hashedPassword,
-    });
-
-    userId = user.id;
-
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
-
-    token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
-  });
-
   describe("GET /api/location/suggest", () => {
-    it("should return a list of locations matching the query", async () => {
+    it("returns a list of locations matching the query", async () => {
+      // Mock the service to return dummy data
+      fetchLocations.mockResolvedValueOnce([
+        {
+          id: "Pennewang-AT-4",
+          name: "Pennewang",
+          latitude: 48.13333,
+          longitude: 13.85,
+          country: "Austria",
+          countryCode: "AT",
+          state: "Upper Austria",
+          stateCode: "4",
+          zip: null,
+        },
+        {
+          id: "New Lambton-AU-NSW",
+          name: "New Lambton",
+          latitude: -32.92838,
+          longitude: 151.7085,
+          country: "Australia",
+          countryCode: "AU",
+          state: "New South Wales",
+          stateCode: "NSW",
+          zip: null,
+        },
+      ]);
+
       const res = await request(app)
         .get("/api/location/suggest")
         .query({ query: "New", limit: 2 });
 
       expect(res.statusCode).toBe(200);
-      expect(res.body.locations.length).toBe(2);
-      expect(res.body.locations[0]).toHaveProperty("name");
-      expect(res.body.locations[0]).toHaveProperty("country");
-      expect(res.body.locations[0]).toHaveProperty("latitude");
-      expect(res.body.locations[0]).toHaveProperty("longitude");
-      expect(res.body.locations[0]).toHaveProperty("id");
-      expect(res.body.locations[0]).toHaveProperty("zip");
+      expect(res.body.length).toBe(2);
+      expect(res.body[0]).toEqual({
+        id: "Pennewang-AT-4",
+        name: "Pennewang",
+        latitude: 48.13333,
+        longitude: 13.85,
+        country: "Austria",
+        countryCode: "AT",
+        state: "Upper Austria",
+        stateCode: "4",
+        zip: null,
+      });
+      expect(res.body[1]).toEqual({
+        id: "New Lambton-AU-NSW",
+        name: "New Lambton",
+        latitude: -32.92838,
+        longitude: 151.7085,
+        country: "Australia",
+        countryCode: "AU",
+        state: "New South Wales",
+        stateCode: "NSW",
+        zip: null,
+      });
     });
 
-    it("should return an error if query is not provided", async () => {
+    it("returns a 400 error if query is not provided", async () => {
       const res = await request(app).get("/api/location/suggest");
 
       expect(res.statusCode).toBe(400);
       expect(res.body.msg).toBe("Search query is required");
+    });
+
+    it("returns a 500 error if the service throws an error", async () => {
+      // Mock the service to throw an error
+      fetchLocations.mockRejectedValueOnce(new Error("Service error"));
+
+      const res = await request(app)
+        .get("/api/location/suggest")
+        .query({ query: "New" });
+
+      expect(res.statusCode).toBe(500);
+      expect(res.text).toBe("Server error");
+    });
+
+    it("limits the number of results based on the limit query parameter", async () => {
+      // Mock the service to return more than 2 results
+      fetchLocations.mockResolvedValueOnce([
+        {
+          id: "Pennewang-AT-4",
+          name: "Pennewang",
+          latitude: 48.13333,
+          longitude: 13.85,
+          country: "Austria",
+          countryCode: "AT",
+          state: "Upper Austria",
+          stateCode: "4",
+          zip: null,
+        },
+        {
+          id: "New Lambton-AU-NSW",
+          name: "New Lambton",
+          latitude: -32.92838,
+          longitude: 151.7085,
+          country: "Australia",
+          countryCode: "AU",
+          state: "New South Wales",
+          stateCode: "NSW",
+          zip: null,
+        },
+        {
+          id: "New Orleans-US-LA",
+          name: "New Orleans",
+          latitude: 29.9511,
+          longitude: -90.0715,
+          country: "United States",
+          countryCode: "US",
+          state: "Louisiana",
+          stateCode: "LA",
+          zip: "70112",
+        },
+      ]);
+
+      const res = await request(app)
+        .get("/api/location/suggest")
+        .query({ query: "New", limit: 2 });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.length).toBe(2); // Validate limit
+      expect(res.body[0]).toEqual({
+        id: "Pennewang-AT-4",
+        name: "Pennewang",
+        latitude: 48.13333,
+        longitude: 13.85,
+        country: "Austria",
+        countryCode: "AT",
+        state: "Upper Austria",
+        stateCode: "4",
+        zip: null,
+      });
+      expect(res.body[1]).toEqual({
+        id: "New Lambton-AU-NSW",
+        name: "New Lambton",
+        latitude: -32.92838,
+        longitude: 151.7085,
+        country: "Australia",
+        countryCode: "AU",
+        state: "New South Wales",
+        stateCode: "NSW",
+        zip: null,
+      });
     });
   });
 });

@@ -93,7 +93,7 @@ describe("Navbar", () => {
 
     const logoutButtons = screen.getAllByText(/Logout/i);
     act(() => {
-      fireEvent.click(logoutButtons[0]); // Click the first logout button (usually desktop view)
+      fireEvent.click(logoutButtons[0]); // Click the first logout button
     });
 
     // Check if logout action was dispatched

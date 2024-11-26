@@ -49,6 +49,7 @@ export const getForecast = async (req, res) => {
     latitude: latitude,
     longitude: longitude,
     timezone: timezone,
+    hourly: "temperature_2m",
   };
 
   try {

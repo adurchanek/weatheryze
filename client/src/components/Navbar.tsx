@@ -16,20 +16,25 @@ const Navbar: React.FC = () => {
     <nav className="bg-white shadow-md">
       <div className="container mx-auto px-2 md:px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link
-            to="/"
-            className="text-xl font-semibold text-blue-600 hover:text-blue-700"
-          >
-            Weatheryze
+          <Link to="/" className="flex items-center space-x-2">
+            <img src="/icon-3.svg" alt="Sun Icon" className="w-8 h-8" />{" "}
+            {/*<span className="text-xl font-semibold text-blue-600 hover:text-blue-700">*/}
+            <span
+              className="text-xl font-semibold bg-clip-text
+            text-transparent bg-gradient-to-br from-blue-400 via-purple-400
+            to-indigo-400 drop-shadow-lg text-center hover:text-purple-400"
+            >
+              Weatheryze
+            </span>
           </Link>
           <div className="hidden md:flex space-x-4">
-            <Link to="/" className="text-gray-700 hover:text-gray-900">
+            <Link to="/" className="text-gray-600 hover:text-gray-900">
               Home
             </Link>
             {user.isAuthenticated && (
               <Link
                 to="/favorites"
-                className="text-gray-700 hover:text-gray-900"
+                className="text-gray-600 hover:text-gray-900"
               >
                 Favorites
               </Link>
@@ -39,12 +44,12 @@ const Navbar: React.FC = () => {
         <div className="hidden md:flex items-center space-x-4">
           {user.isAuthenticated ? (
             <>
-              <span className="text-gray-700">
+              <span className="text-gray-600">
                 Welcome, {user.userInfo?.name}
               </span>
               <button
                 onClick={handleLogout}
-                className="px-3 py-1 bg-gray-700 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="px-2 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 Logout
               </button>
@@ -71,7 +76,7 @@ const Navbar: React.FC = () => {
         <div className="md:hidden">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             <svg
               className="w-6 h-6"
@@ -100,7 +105,7 @@ const Navbar: React.FC = () => {
         <div className="bg-white shadow-lg py-4 flex flex-col space-y-2 items-start px-4">
           <Link
             to="/"
-            className="text-gray-700 hover:text-gray-900"
+            className="text-gray-600 hover:text-gray-900"
             onClick={() => setIsMenuOpen(false)}
           >
             Home
@@ -108,7 +113,7 @@ const Navbar: React.FC = () => {
           {user.isAuthenticated && (
             <Link
               to="/favorites"
-              className="text-gray-700 hover:text-gray-900"
+              className="text-gray-600 hover:text-gray-900"
               onClick={() => setIsMenuOpen(false)}
             >
               Favorites
@@ -116,7 +121,7 @@ const Navbar: React.FC = () => {
           )}
           {user.isAuthenticated ? (
             <>
-              <span className="text-gray-700">
+              <span className="text-gray-600">
                 Welcome, {user.userInfo?.name}
               </span>
               <button
@@ -133,14 +138,14 @@ const Navbar: React.FC = () => {
             <>
               <Link
                 to="/login"
-                className="text-gray-700 hover:text-gray-900"
+                className="text-gray-600 hover:text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="text-gray-700 hover:text-gray-900"
+                className="text-gray-600 hover:text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Register

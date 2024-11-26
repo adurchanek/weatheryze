@@ -8,11 +8,9 @@ import userReducer, { UserState } from "../../redux/slices/userSlice";
 import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
 
-// Mock axios
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-// Mock useNavigate
 const mockNavigate = jest.fn();
 
 jest.mock("react-router-dom", () => ({
@@ -103,7 +101,6 @@ describe("RegisterPage", () => {
     expect(state.user.userInfo).toEqual(userInfo);
     expect(state.user.token).toBe(fakeToken);
 
-    // Check if navigate was called
     expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 

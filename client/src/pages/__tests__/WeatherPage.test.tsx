@@ -11,7 +11,9 @@ import WeatherPage from "../WeatherPage";
 import { Provider } from "react-redux";
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
 import { WeatherState } from "../../types/weather";
-import weatherReducer from "../../redux/slices/weatherSlice";
+import weatherReducer, {
+  setCurrentLocation,
+} from "../../redux/slices/weatherSlice";
 import userReducer from "../../redux/slices/userSlice";
 import favoritesReducer, {
   FavoritesState,
@@ -33,6 +35,18 @@ interface MinimalRootState {
 
 describe("WeatherPage", () => {
   let store: EnhancedStore<MinimalRootState>;
+
+  const mockLocation = {
+    id: "LosAngeles-CA",
+    name: "Los Angeles",
+    latitude: 34.0522,
+    longitude: -118.2437,
+    country: "USA",
+    countryCode: "US",
+    state: "California",
+    stateCode: "CA",
+    zip: "90001",
+  };
 
   beforeEach(() => {
     store = configureStore({
@@ -67,13 +81,17 @@ describe("WeatherPage", () => {
 
   it("displays loading state initially", async () => {
     mockAxios
-      .onGet(/\/weather\/current\?location=Los%20Angeles/)
+      .onGet("/weather/current?location=Los%20Angeles")
       .reply(() => new Promise(() => {}));
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
+        "/weather/forecast?latitude=34.0522&longitude=-118.2437&timezone=auto",
       )
       .reply(() => new Promise(() => {}));
+
+    act(() => {
+      store.dispatch(setCurrentLocation(mockLocation));
+    });
 
     await act(async () => {
       renderWithProviders(<WeatherPage />);
@@ -102,13 +120,17 @@ describe("WeatherPage", () => {
     };
 
     mockAxios
-      .onGet(/\/weather\/current\?location=Los%20Angeles/)
+      .onGet("/weather/current?location=Los%20Angeles")
       .reply(200, currentWeatherData);
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
+        "/weather/forecast?latitude=34.0522&longitude=-118.2437&timezone=auto",
       )
       .reply(200, forecastData);
+
+    act(() => {
+      store.dispatch(setCurrentLocation(mockLocation));
+    });
 
     await act(async () => {
       renderWithProviders(<WeatherPage />);
@@ -124,17 +146,21 @@ describe("WeatherPage", () => {
   it("dispatches setError and redirects on fetch failure", async () => {
     const errorMessage = "Error fetching weather data";
 
-    mockAxios.onGet(/\/weather\/current\?location=Los%20Angeles/).reply(500, {
+    mockAxios.onGet("/weather/current?location=Los%20Angeles").reply(500, {
       message: errorMessage,
     });
 
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
+        "/weather/forecast?latitude=34.0522&longitude=-118.2437&timezone=auto",
       )
       .reply(500, {
         message: errorMessage,
       });
+
+    act(() => {
+      store.dispatch(setCurrentLocation(mockLocation));
+    });
 
     await act(async () => {
       renderWithProviders(<WeatherPage />);
@@ -170,11 +196,11 @@ describe("WeatherPage", () => {
     };
 
     mockAxios
-      .onGet(/\/weather\/current\?location=Los%20Angeles/)
+      .onGet("/weather/current?location=Los%20Angeles")
       .reply(200, weatherData);
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
+        "/weather/forecast?latitude=34.0522&longitude=-118.2437&timezone=auto",
       )
       .reply(200, forecastData);
     mockAxios.onGet("/weather/favorites").reply(200, []);
@@ -189,6 +215,10 @@ describe("WeatherPage", () => {
       middleware: [thunk],
     });
     setStore(store as any);
+
+    act(() => {
+      store.dispatch(setCurrentLocation(mockLocation));
+    });
 
     await act(async () => {
       renderWithProviders(<WeatherPage />);
@@ -223,11 +253,11 @@ describe("WeatherPage", () => {
     };
 
     mockAxios
-      .onGet(/\/weather\/current\?location=Los%20Angeles/)
+      .onGet("/weather/current?location=Los%20Angeles")
       .reply(200, weatherData);
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
+        "/weather/forecast?latitude=34.0522&longitude=-118.2437&timezone=auto",
       )
       .reply(200, forecastData);
     mockAxios.onGet("/weather/favorites").reply(200, []);
@@ -242,6 +272,10 @@ describe("WeatherPage", () => {
       middleware: [thunk],
     });
     setStore(store as any);
+
+    act(() => {
+      store.dispatch(setCurrentLocation(mockLocation));
+    });
 
     await act(async () => {
       renderWithProviders(<WeatherPage />);
@@ -283,15 +317,19 @@ describe("WeatherPage", () => {
     };
 
     mockAxios
-      .onGet(/\/weather\/current\?location=Los%20Angeles/)
+      .onGet("/weather/current?location=Los%20Angeles")
       .reply(200, currentWeatherData);
     mockAxios
       .onGet(
-        "/weather/forecast?latitude=42.8142&longitude=-73.9396&timezone=auto",
+        "/weather/forecast?latitude=34.0522&longitude=-118.2437&timezone=auto",
       )
       .reply(200, forecastData);
     mockAxios.onGet("/weather/favorites").reply(200, []);
     mockAxios.onPost("/weather/favorites").reply(200, newFavorite);
+
+    act(() => {
+      store.dispatch(setCurrentLocation(mockLocation));
+    });
 
     act(() => {
       store.dispatch({
@@ -328,5 +366,26 @@ describe("WeatherPage", () => {
 
     expect(mockAxios.history.post.length).toBe(1);
     expect(mockAxios.history.post[0].url).toBe("/weather/favorites");
+  });
+
+  it("does not fetch data if currentLocation is null", async () => {
+    await act(async () => {
+      renderWithProviders(<WeatherPage />);
+    });
+
+    expect(mockAxios.history.get.length).toBe(0);
+    expect(screen.getByText(/Home Page/i)).toBeInTheDocument(); // Redirected
+  });
+
+  it("redirects to Home when currentLocation is invalid", async () => {
+    act(() => {
+      store.dispatch(setCurrentLocation(null));
+    });
+
+    await act(async () => {
+      renderWithProviders(<WeatherPage />);
+    });
+
+    expect(screen.getByText(/Home Page/i)).toBeInTheDocument();
   });
 });

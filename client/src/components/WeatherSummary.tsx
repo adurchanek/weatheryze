@@ -17,7 +17,7 @@ const WeatherSummary: React.FC<WeatherSummaryProps> = ({
 }) => {
   return (
     <div
-      className="p-6 bg-white rounded-lg shadow-md text-center max-w-sm mx-auto"
+      className="p-6 bg-white  text-center max-w-sm mx-auto"
       aria-label="weather-summary"
     >
       <h2 className="text-2xl font-bold text-gray-800 mb-4">

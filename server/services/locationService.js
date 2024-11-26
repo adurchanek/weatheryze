@@ -1,32 +1,46 @@
-const fetchLocation = async (req) => {
-  const dummyLocations = [
-    {
-      latitude: -22.3142,
-      longitude: 53.7396,
-      name: "Newark",
-      id: "1",
-      country: "United States",
-      zip: "00000",
-    },
-    {
-      latitude: 42.8142,
-      longitude: -73.9396,
-      name: "New York",
-      id: "2",
-      country: "United States",
-      zip: "111111",
-    },
-    {
-      latitude: 12.8142,
-      longitude: -3.9396,
-      name: "New Orleans",
-      id: "3",
-      country: "United States",
-      zip: "222222",
-    },
-  ];
+import { City, Country, State } from "country-state-city";
 
-  return dummyLocations;
+const fetchLocation = async (query) => {
+  try {
+    // Fetch all cities, states, and countries
+    const allCities = City.getAllCities();
+    const allStates = State.getAllStates();
+    const allCountries = Country.getAllCountries();
+
+    // Create lookup maps for countries and states
+    const countryMap = allCountries.reduce((acc, country) => {
+      acc[country.isoCode] = country.name;
+      return acc;
+    }, {});
+
+    const stateMap = allStates.reduce((acc, state) => {
+      acc[`${state.countryCode}-${state.isoCode}`] = state.name;
+      return acc;
+    }, {});
+
+    // Filter cities based on the query
+    const filteredCities = allCities.filter((city) =>
+      city.name.toLowerCase().includes(query.toLowerCase()),
+    );
+
+    // Map the results to the desired format
+    const locations = filteredCities.map((city) => ({
+      latitude: parseFloat(city.latitude),
+      longitude: parseFloat(city.longitude),
+      name: city.name,
+      id: `${city.name}-${city.countryCode}-${city.stateCode}`,
+      country: countryMap[city.countryCode] || "Unknown Country",
+      countryCode: city.countryCode,
+      state: stateMap[`${city.countryCode}-${city.stateCode}`] || null,
+      stateCode: city.stateCode || null,
+      zip: null,
+    }));
+
+    return locations;
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    throw new Error("Failed to fetch locations.");
+  }
 };
 
 export default fetchLocation;

@@ -1,17 +1,19 @@
 import React from "react";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid,
   ResponsiveContainer,
+  CartesianGrid,
+  ReferenceLine,
 } from "recharts";
 import { ForecastData } from "../types/weather";
 
 interface ChartDataPoint {
-  time: string;
+  time: string; // Display format for the chart
+  timestamp: number; // Actual timestamp for comparison
   temperature: number;
 }
 
@@ -39,55 +41,110 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ forecastData }) => {
     );
   }
 
-  // Transform temperature2m object into a sorted array
+  // Assume `utcOffsetSeconds` is -18000 for EST
+  const utcOffsetSeconds = -18000; // From the API (UTC-5)
+
+  // Process the data for the chart
   const temperatureArray: number[] = Object.keys(hourly.temperature2m)
     .sort((a, b) => Number(a) - Number(b))
     .map((key) => hourly.temperature2m[key]);
 
-  // Ensure the time array and temperature array have the same length
   const minLength = Math.min(hourly.time.length, temperatureArray.length);
 
+  // Prepare chart data with timestamps
   const chartData: ChartDataPoint[] = Array.from(
     { length: minLength },
-    (_, index) => ({
-      time: new Date(hourly.time[index]).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      temperature: temperatureArray[index],
-    }),
+    (_, index) => {
+      const timestamp = new Date(hourly.time[index]).getTime(); // Ensure accurate timestamp
+      return {
+        time: hourly.time[index], // Use raw UTC time string
+        timestamp,
+        temperature: temperatureArray[index],
+      };
+    },
   );
+
+  // Get the current local timestamp
+  const currentLocalTimestamp = Date.now() + utcOffsetSeconds * 1000;
+
+  // Find the nearest data point by timestamp
+  const currentDataPoint = chartData.reduce((closest, point) => {
+    const diffCurrent = Math.abs(point.timestamp - currentLocalTimestamp);
+    const diffClosest = Math.abs(closest.timestamp - currentLocalTimestamp);
+
+    return diffCurrent < diffClosest ? point : closest;
+  }, chartData[0]);
 
   return (
     <div className="mt-8">
       <h2 className="text-xl font-semibold mb-4 text-center">
         Hourly Forecast
       </h2>
-      {/* Wrap ResponsiveContainer with a div that has data-testid to avoid warnings */}
       <div data-testid="hourly-forecast-chart">
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart
+          <AreaChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
+            <defs>
+              <linearGradient
+                id="temperatureGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop offset="0%" stopColor="#ff0000" stopOpacity={0.65} />
+                <stop offset="100%" stopColor="#ff6e6e" stopOpacity={0.05} />
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" />
+            <XAxis
+              dataKey="time"
+              tickFormatter={(time) =>
+                new Date(time).toISOString().slice(11, 16)
+              } // Display in UTC "HH:mm"
+            />
             <YAxis
               label={{
                 value: "Temperature (°C)",
                 angle: -90,
                 position: "insideLeft",
               }}
-              domain={["auto", "auto"]}
             />
-            <Tooltip />
-            <Line
+            <Tooltip
+              labelFormatter={(label) =>
+                new Date(label).toISOString().slice(11, 16)
+              } // Ensure tooltip uses UTC time
+            />
+            <Area
               type="monotone"
               dataKey="temperature"
-              stroke="#8884d8"
-              activeDot={{ r: 8 }}
+              stroke="#ff0000"
+              strokeWidth={2}
+              strokeOpacity={0.8}
+              fill="url(#temperatureGradient)" // Gradient fill
+              fillOpacity={1}
+              dot={{
+                r: 3, // Circle radius
+                stroke: "#ff6868", // Blue outline color
+                fill: "#00f7ff", // Blue fill color
+              }}
             />
-          </LineChart>
+            {/* Add the ReferenceLine */}
+            <ReferenceLine
+              x={currentDataPoint.time}
+              stroke="#000"
+              strokeWidth={2}
+              strokeDasharray="3 3"
+              label={{
+                value: "Now",
+                position: "top",
+                fill: "#000",
+                fontSize: 12,
+              }}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>

@@ -1,5 +1,3 @@
-// src/pages/WeatherPage.tsx
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -22,42 +20,48 @@ const WeatherPage: React.FC = () => {
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    if (favorites.data && location) {
+    if (user.isAuthenticated && favorites.data && location) {
       setIsFavorite(
         favorites.data.some((favorite) => favorite.location === location),
       );
     }
-  }, [favorites.data, location]);
+  }, [favorites.data, location, user.isAuthenticated]);
 
   useEffect(() => {
-    if (favorites.data === null && favorites.status === "idle") {
+    if (
+      user.isAuthenticated &&
+      favorites.data === null &&
+      favorites.status === "idle"
+    ) {
       dispatch(fetchFavorites());
     }
-  }, [dispatch, favorites.data, favorites.status]);
+  }, [dispatch, favorites.data, favorites.status, user.isAuthenticated]);
 
   useEffect(() => {
-    if (location) {
-      // Dispatch both current and forecast weather data fetch actions
-
-      dispatch(fetchCurrentWeatherData(location));
+    if (weather.currentLocation) {
+      dispatch(fetchCurrentWeatherData(weather.currentLocation.name));
       dispatch(
         fetchLocationBasedForecastWeatherData({
-          latitude: 42.8142,
-          longitude: -73.9396,
+          latitude: weather.currentLocation.latitude,
+          longitude: weather.currentLocation.longitude,
           timezone: "auto",
         }),
       );
     }
-  }, [dispatch, location]);
+  }, [dispatch, weather.currentLocation]);
 
   useEffect(() => {
-    // If either current or forecast fetch fails, set error and navigate to home
+    if (!weather.currentLocation && location) {
+      navigate("/", { replace: true });
+    }
+  }, [weather.currentLocation, location, dispatch]);
+
+  useEffect(() => {
     if (
       weather.current.status === "failed" ||
       weather.forecast.status === "failed"
     ) {
       dispatch(setError("Error fetching weather data"));
-      // Redirect to Home page after showing error notification
       navigate("/", { replace: true });
     }
   }, [weather.current.status, weather.forecast.status, dispatch, navigate]);
@@ -80,13 +84,12 @@ const WeatherPage: React.FC = () => {
     }
   };
 
-  // Determine if data is loading
   const isLoading =
     weather.current.status === "loading" ||
     weather.forecast.status === "loading";
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6 bg-white rounded-sm shadow-md">
       {isLoading && (
         <div className="text-center text-gray-600">
           <div className="spinner-border text-primary" role="status">

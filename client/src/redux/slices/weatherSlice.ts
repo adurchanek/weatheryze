@@ -6,8 +6,8 @@ import {
   WeatherState,
   CoordinatesParams,
 } from "../../types/weather";
+import { Location } from "../../types/location";
 
-// Initial state with default values for current and forecast data
 const initialState: WeatherState = {
   current: {
     data: {
@@ -28,10 +28,10 @@ const initialState: WeatherState = {
     },
     status: "idle",
   },
+  currentLocation: null,
   error: null,
 };
 
-// Async thunk to fetch current weather data
 export const fetchCurrentWeatherData = createAsyncThunk(
   "weather/fetchCurrentWeatherData",
   async (location: string, { rejectWithValue }) => {
@@ -48,7 +48,6 @@ export const fetchCurrentWeatherData = createAsyncThunk(
   },
 );
 
-// Async thunk to fetch forecast weather data
 export const fetchLocationBasedForecastWeatherData = createAsyncThunk<
   ForecastData,
   CoordinatesParams,
@@ -71,11 +70,14 @@ export const fetchLocationBasedForecastWeatherData = createAsyncThunk<
   },
 );
 
-// Weather slice managing both current and forecast data
 const weatherSlice = createSlice({
   name: "weather",
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentLocation(state, action: PayloadAction<Location | null>) {
+      state.currentLocation = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCurrentWeatherData.pending, (state) => {
@@ -128,5 +130,7 @@ const weatherSlice = createSlice({
       );
   },
 });
+
+export const { setCurrentLocation } = weatherSlice.actions;
 
 export default weatherSlice.reducer;

@@ -9,7 +9,6 @@ import { configureStore, Store } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import MockAdapter from "axios-mock-adapter";
 
-// Mock axiosInstance
 const mockAxios = new MockAdapter(axiosInstance);
 
 describe("favoritesSlice", () => {
@@ -21,7 +20,6 @@ describe("favoritesSlice", () => {
   let store: Store;
 
   beforeEach(() => {
-    // Define store directly in the test
     store = configureStore({
       reducer: {
         favorites: favoritesReducer,

@@ -8,8 +8,9 @@ const fetchWeather = async (req) => {
     const params = {
       latitude: req.latitude,
       longitude: req.longitude,
-      hourly: "temperature_2m",
-      timezone: "America/New_York",
+      hourly: req.hourly,
+      timezone: req.timezone,
+      forecast_days: 1,
     };
 
     // Make the API request using fetchWeatherApi with the specified URL and params

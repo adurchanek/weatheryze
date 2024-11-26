@@ -4,10 +4,12 @@ export interface Location {
   name: string;
   id: string;
   country: string;
-  zip: string;
+  countryCode: string;
+  state: string | null;
+  stateCode: string | null;
+  zip: string | null;
 }
 
-// Types for argument structure
 export interface LocationSearchParams {
   query: string;
   limit: number;

@@ -7,7 +7,6 @@ import thunk from "redux-thunk";
 import MockAdapter from "axios-mock-adapter";
 import { Location, LocationState } from "../../../types/location";
 
-// Mock axiosInstance
 const mockAxios = new MockAdapter(axiosInstance);
 
 describe("locationsSlice", () => {
@@ -22,10 +21,9 @@ describe("locationsSlice", () => {
   let store: Store;
 
   beforeEach(() => {
-    // Define store directly in the test
     store = configureStore({
       reducer: {
-        locations: locationsReducer,
+        location: locationsReducer,
       },
       middleware: [thunk],
     });
@@ -45,28 +43,34 @@ describe("locationsSlice", () => {
     });
 
     it("should handle fetchLocationsSuggestionsData fulfilled", async () => {
-      const locations: Location[] = [
+      const suggestions: Location[] = [
         {
-          latitude: 42.8142,
-          longitude: -73.9396,
-          name: "New York",
-          id: "1",
-          country: "United States",
-          zip: "00000",
+          id: "Pennewang-AT-4",
+          name: "Pennewang",
+          latitude: 48.13333,
+          longitude: 13.85,
+          country: "Austria",
+          countryCode: "AT",
+          state: "Upper Austria",
+          stateCode: "4",
+          zip: null,
         },
         {
-          latitude: 12.8142,
-          longitude: 73.9396,
-          name: "Newark",
-          id: "2",
-          country: "United States",
-          zip: "11111",
+          id: "New Lambton-AU-NSW",
+          name: "New Lambton",
+          latitude: -32.92838,
+          longitude: 151.7085,
+          country: "Australia",
+          countryCode: "AU",
+          state: "New South Wales",
+          stateCode: "NSW",
+          zip: null,
         },
       ];
 
       mockAxios
         .onGet("/location/suggest?query=New&limit=3")
-        .reply(200, locations);
+        .reply(200, suggestions);
 
       await store.dispatch(
         fetchLocationsSuggestionsData({
@@ -75,9 +79,9 @@ describe("locationsSlice", () => {
         }) as any,
       );
 
-      const state = store.getState().locations;
+      const state = store.getState().location;
       expect(state.suggestions.status).toBe("succeeded");
-      expect(state.suggestions.data).toEqual(locations);
+      expect(state.suggestions.data).toEqual(suggestions);
     });
 
     it("should handle fetchLocationsSuggestionsData rejected", async () => {
@@ -92,7 +96,7 @@ describe("locationsSlice", () => {
         }) as any,
       );
 
-      const state = store.getState().locations;
+      const state = store.getState().location;
       expect(state.suggestions.status).toBe("failed");
       expect(state.suggestions.data).toBeNull();
     });

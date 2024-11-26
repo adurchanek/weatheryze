@@ -52,9 +52,15 @@ const App: React.FC = () => {
       <div className="flex flex-col min-h-screen bg-gray-100">
         <Navbar />
         <ErrorNotification />
-        <main className="flex-grow flex justify-center items-center bg-gradient-to-br from-blue-100 via-purple-50 to-indigo-50 px-2 sm:px-4">
-          <div className="w-full max-w-2xl px-4 py-6">
-            <Suspense fallback={<div>Loading...</div>}>
+        <main className="flex-grow flex justify-center bg-gradient-to-br from-blue-100 via-purple-50 to-indigo-50 px-2 sm:px-4">
+          <div className="w-full max-w-7xl px-4 py-6">
+            <Suspense
+              fallback={
+                <div className="flex justify-center items-center min-h-screen">
+                  Loading...
+                </div>
+              }
+            >
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/weather/:location" element={<WeatherPage />} />

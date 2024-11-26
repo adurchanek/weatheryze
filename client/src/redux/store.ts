@@ -4,7 +4,7 @@ import weatherReducer from "./slices/weatherSlice";
 import favoritesReducer from "./slices/favoritesSlice";
 import errorReducer from "./slices/errorSlice";
 import locationReducer from "./slices/locationSlice";
-import { setStore } from "../services/axiosInstance"; // Adjusted import path
+import { setStore } from "../services/axiosInstance";
 
 export const store = configureStore({
   reducer: {
@@ -12,7 +12,7 @@ export const store = configureStore({
     weather: weatherReducer,
     favorites: favoritesReducer,
     error: errorReducer,
-    locations: locationReducer,
+    location: locationReducer,
   },
 });
 

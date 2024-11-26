@@ -4,7 +4,7 @@ import { io, Socket } from "socket.io-client";
 export const SocketContext = createContext<Socket | null>(null);
 
 const socket: Socket = io("http://localhost:5002", {
-  transports: ["websocket"], // Force WebSocket transport if necessary
+  transports: ["websocket"],
   reconnectionAttempts: 5,
 });
 

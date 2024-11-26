@@ -11,11 +11,10 @@ export const suggestLocations = async (req, res) => {
   }
 
   try {
-    const dummyLocations = await fetchLocations(query);
-    const locations = dummyLocations.slice(0, limit);
-    res.status(200).json({ locations });
+    const suggestedLocations = await fetchLocations(query);
+    const locations = suggestedLocations.slice(0, limit);
+    res.status(200).json(locations);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send("Server error");
   }
 };

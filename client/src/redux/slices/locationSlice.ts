@@ -14,7 +14,6 @@ const initialState: LocationState = {
   error: null,
 };
 
-// Async thunk to fetch forecast location suggestion data
 export const fetchLocationsSuggestionsData = createAsyncThunk<
   Location[],
   LocationSearchParams,

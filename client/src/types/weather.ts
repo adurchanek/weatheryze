@@ -1,3 +1,5 @@
+import { Location } from "./location";
+
 export interface CurrentWeatherData {
   location: string;
   temperature: number;
@@ -24,10 +26,10 @@ export interface WeatherState {
     data: ForecastData | null;
     status: "idle" | "loading" | "succeeded" | "failed";
   };
+  currentLocation: Location | null;
   error: string | null;
 }
 
-// Types for argument structure
 export interface CoordinatesParams {
   latitude: number;
   longitude: number;

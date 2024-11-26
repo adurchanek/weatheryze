@@ -12,7 +12,6 @@ export const setStore = (_store: Store<RootState>) => {
   store = _store;
 };
 
-// Add a request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = store?.getState().user?.token;

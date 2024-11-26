@@ -9,10 +9,8 @@ import { FavoritesState } from "../../redux/slices/favoritesSlice";
 import { ErrorState } from "../../redux/slices/errorSlice";
 import { LocationState } from "../../types/location";
 
-// Configure the mock store with thunk middleware
 const mockStore = configureMockStore<RootState>([thunk]);
 
-// Define default/mock states for each slice
 const defaultUserState: UserState = {
   isAuthenticated: true,
   userInfo: {
@@ -33,6 +31,7 @@ const defaultWeatherState: WeatherState = {
     data: null,
     status: "idle",
   },
+  currentLocation: null,
   error: null,
 };
 
@@ -58,26 +57,21 @@ describe("axiosInstance Interceptors", () => {
   let mock: MockAdapter;
 
   beforeEach(() => {
-    // Initialize mock adapter for axiosInstance
     mock = new MockAdapter(axiosInstance);
 
-    // Initialize mock store with all required slices
     store = mockStore({
       user: defaultUserState,
       weather: defaultWeatherState,
       favorites: defaultFavoritesState,
       error: defaultErrorState,
-      locations: defaultLocationState,
+      location: defaultLocationState,
     });
 
-    // Set the store in axiosInstance
     setStore(store);
   });
 
   afterEach(() => {
-    // Reset mock after each test
     mock.reset();
-    // Clear any actions recorded by the mock store
     store.clearActions();
   });
 
@@ -112,7 +106,7 @@ describe("axiosInstance Interceptors", () => {
       weather: defaultWeatherState,
       favorites: defaultFavoritesState,
       error: defaultErrorState,
-      locations: defaultLocationState,
+      location: defaultLocationState,
     });
 
     // Set the updated store

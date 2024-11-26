@@ -15,6 +15,7 @@ export interface ForecastHourlyData {
 
 export interface ForecastData {
   hourly: ForecastHourlyData;
+  utcOffsetSeconds: number;
 }
 
 export interface WeatherState {

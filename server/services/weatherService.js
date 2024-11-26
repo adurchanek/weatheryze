@@ -55,6 +55,7 @@ const fetchWeather = async (req) => {
         temperature2m:
           (hourly.variables(0) && hourly.variables(0).valuesArray()) || [],
       },
+      utcOffsetSeconds,
     };
 
     // Log the weather data

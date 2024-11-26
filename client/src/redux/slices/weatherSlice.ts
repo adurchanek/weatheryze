@@ -25,6 +25,7 @@ const initialState: WeatherState = {
         time: [],
         temperature2m: {},
       },
+      utcOffsetSeconds: 0,
     },
     status: "idle",
   },
@@ -125,6 +126,7 @@ const weatherSlice = createSlice({
               time: [],
               temperature2m: {},
             },
+            utcOffsetSeconds: 0,
           };
         },
       );

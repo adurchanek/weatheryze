@@ -33,6 +33,7 @@ describe("weatherSlice", () => {
           time: [],
           temperature2m: {},
         },
+        utcOffsetSeconds: 0,
       },
       status: "idle",
     },
@@ -139,6 +140,7 @@ describe("weatherSlice", () => {
           "1": 12.34,
         },
       },
+      utcOffsetSeconds: -18000,
     };
 
     mockAxios
@@ -185,6 +187,7 @@ describe("weatherSlice", () => {
         time: [],
         temperature2m: {},
       },
+      utcOffsetSeconds: 0,
     });
     expect(state.error).toBe("Forecast data not found");
   });

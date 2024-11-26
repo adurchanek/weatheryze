@@ -117,6 +117,7 @@ describe("WeatherPage", () => {
           "1": 19.5,
         },
       },
+      utcOffsetSeconds: -18000,
     };
 
     mockAxios
@@ -193,6 +194,7 @@ describe("WeatherPage", () => {
           "1": 19.5,
         },
       },
+      utcOffsetSeconds: -18000,
     };
 
     mockAxios
@@ -250,6 +252,7 @@ describe("WeatherPage", () => {
           "1": 19.5,
         },
       },
+      utcOffsetSeconds: -18000,
     };
 
     mockAxios
@@ -307,6 +310,7 @@ describe("WeatherPage", () => {
           "1": 19.5,
         },
       },
+      utcOffsetSeconds: -18000,
     };
 
     const newFavorite = {

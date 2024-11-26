@@ -22,7 +22,7 @@ interface WeatherForecastProps {
 }
 
 const WeatherForecast: React.FC<WeatherForecastProps> = ({ forecastData }) => {
-  const { hourly } = forecastData;
+  const { hourly, utcOffsetSeconds } = forecastData;
 
   // Check if forecast data is available
   const hasData =
@@ -40,9 +40,6 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ forecastData }) => {
       </div>
     );
   }
-
-  // Assume `utcOffsetSeconds` is -18000 for EST
-  const utcOffsetSeconds = -18000; // From the API (UTC-5)
 
   // Process the data for the chart
   const temperatureArray: number[] = Object.keys(hourly.temperature2m)
@@ -134,13 +131,13 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ forecastData }) => {
             {/* Add the ReferenceLine */}
             <ReferenceLine
               x={currentDataPoint.time}
-              stroke="#000"
-              strokeWidth={2}
+              stroke="#66c9ca"
+              strokeWidth={3}
               strokeDasharray="3 3"
               label={{
                 value: "Now",
                 position: "top",
-                fill: "#000",
+                fill: "#9a9a9a",
                 fontSize: 12,
               }}
             />

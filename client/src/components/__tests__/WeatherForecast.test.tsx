@@ -44,6 +44,7 @@ describe("WeatherForecast", () => {
         "2": 18.5,
       },
     },
+    utcOffsetSeconds: -18000,
   };
 
   const emptyForecastData: ForecastData = {
@@ -51,6 +52,7 @@ describe("WeatherForecast", () => {
       time: [],
       temperature2m: {},
     },
+    utcOffsetSeconds: 0,
   };
 
   beforeEach(() => {

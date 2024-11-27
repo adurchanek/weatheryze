@@ -131,13 +131,13 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ forecastData }) => {
             {/* Add the ReferenceLine */}
             <ReferenceLine
               x={currentDataPoint.time}
-              stroke="#66c9ca"
-              strokeWidth={3}
+              stroke="#3a3a3a"
+              strokeWidth={2}
               strokeDasharray="3 3"
               label={{
-                value: "Now",
+                value: "Local Time",
                 position: "top",
-                fill: "#9a9a9a",
+                fill: "#616161",
                 fontSize: 12,
               }}
             />

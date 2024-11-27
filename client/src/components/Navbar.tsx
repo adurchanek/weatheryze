@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
               </span>
               <button
                 onClick={handleLogout}
-                className="px-2 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="px-2 py-1 bg-gray-600 text-white rounded-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 Logout
               </button>
@@ -57,13 +57,13 @@ const Navbar: React.FC = () => {
             <>
               <Link
                 to="/login"
-                className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="px-3 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="px-3 py-1 bg-green-500 text-white rounded-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
               >
                 Register
               </Link>

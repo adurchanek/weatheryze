@@ -1,19 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { UserInfo, UserState } from "../../types/user";
 
 const tokenFromStorage = localStorage.getItem("token");
-
-interface UserInfo {
-  _id: string;
-  name: string;
-  email: string;
-}
-
-export interface UserState {
-  isAuthenticated: boolean;
-  userInfo: UserInfo | null;
-  token: string | null;
-  loading: boolean;
-}
 
 const initialState: UserState = {
   isAuthenticated: false,

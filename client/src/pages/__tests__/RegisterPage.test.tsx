@@ -4,9 +4,10 @@ import "@testing-library/jest-dom";
 import RegisterPage from "../RegisterPage";
 import { Provider } from "react-redux";
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
-import userReducer, { UserState } from "../../redux/slices/userSlice";
+import userReducer from "../../redux/slices/userSlice";
 import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
+import { UserState } from "../../types/user";
 
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;

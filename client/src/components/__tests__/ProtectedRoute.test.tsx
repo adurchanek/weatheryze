@@ -3,11 +3,12 @@ import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Provider } from "react-redux";
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
-import userReducer, { UserState } from "../../redux/slices/userSlice";
+import userReducer from "../../redux/slices/userSlice";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "../ProtectedRoute";
 import HomePage from "../../pages/HomePage";
 import LoginPage from "../../pages/LoginPage";
+import { UserState } from "../../types/user";
 
 interface MinimalRootState {
   user: UserState;

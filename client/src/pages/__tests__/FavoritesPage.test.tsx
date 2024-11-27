@@ -10,14 +10,13 @@ import "@testing-library/jest-dom";
 import FavoritesPage from "../FavoritesPage";
 import { Provider } from "react-redux";
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
-import favoritesReducer, {
-  FavoritesState,
-} from "../../redux/slices/favoritesSlice";
+import favoritesReducer from "../../redux/slices/favoritesSlice";
 import userReducer from "../../redux/slices/userSlice";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import thunk from "redux-thunk";
 import axiosInstance from "../../services/axiosInstance";
 import MockAdapter from "axios-mock-adapter";
+import { FavoritesState } from "../../types/favorites";
 
 const mockAxios = new MockAdapter(axiosInstance);
 

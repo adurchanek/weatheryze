@@ -6,9 +6,9 @@ import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
 import errorReducer, {
   setError,
   clearError,
-  ErrorState,
 } from "../../redux/slices/errorSlice";
 import ErrorNotification from "../ErrorNotification";
+import { ErrorState } from "../../types/error";
 
 jest.setTimeout(6000); // Set global timeout to 10 seconds
 

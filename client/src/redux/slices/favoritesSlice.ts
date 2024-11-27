@@ -1,17 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axiosInstance from "../../services/axiosInstance";
-
-interface FavoriteLocation {
-  _id: string;
-  user: string;
-  location: string;
-  date: string;
-}
-
-export interface FavoritesState {
-  data: FavoriteLocation[] | null;
-  status: "idle" | "loading" | "succeeded" | "failed";
-}
+import { FavoriteLocation, FavoritesState } from "../../types/favorites";
 
 const initialState: FavoritesState = {
   data: null,

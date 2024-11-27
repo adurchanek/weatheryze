@@ -15,14 +15,14 @@ import weatherReducer, {
   setCurrentLocation,
 } from "../../redux/slices/weatherSlice";
 import userReducer from "../../redux/slices/userSlice";
-import favoritesReducer, {
-  FavoritesState,
-} from "../../redux/slices/favoritesSlice";
-import errorReducer, { ErrorState } from "../../redux/slices/errorSlice";
+import favoritesReducer from "../../redux/slices/favoritesSlice";
+import errorReducer from "../../redux/slices/errorSlice";
 import thunk from "redux-thunk";
 import axiosInstance, { setStore } from "../../services/axiosInstance";
 import MockAdapter from "axios-mock-adapter";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { ErrorState } from "../../types/error";
+import { FavoritesState } from "../../types/favorites";
 
 const mockAxios = new MockAdapter(axiosInstance);
 

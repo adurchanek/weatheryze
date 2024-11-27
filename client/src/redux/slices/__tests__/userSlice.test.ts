@@ -4,8 +4,8 @@ import userReducer, {
   loadUserStart,
   loadUser,
   loadUserFailure,
-  UserState,
 } from "../userSlice";
+import { UserState } from "../../../types/user";
 
 interface UserInfo {
   _id: string;

@@ -2,12 +2,12 @@ import favoritesReducer, {
   fetchFavorites,
   deleteFavorite,
   saveFavorite,
-  FavoritesState,
 } from "../favoritesSlice";
 import axiosInstance from "../../../services/axiosInstance";
 import { configureStore, Store } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import MockAdapter from "axios-mock-adapter";
+import { FavoritesState } from "../../../types/favorites";
 
 const mockAxios = new MockAdapter(axiosInstance);
 

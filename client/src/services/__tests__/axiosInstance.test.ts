@@ -3,11 +3,11 @@ import MockAdapter from "axios-mock-adapter";
 import configureMockStore, { MockStoreEnhanced } from "redux-mock-store";
 import thunk from "redux-thunk";
 import { RootState } from "../../redux/store";
-import { UserState } from "../../redux/slices/userSlice";
 import { WeatherState } from "../../types/weather";
-import { FavoritesState } from "../../redux/slices/favoritesSlice";
-import { ErrorState } from "../../redux/slices/errorSlice";
 import { LocationState } from "../../types/location";
+import { ErrorState } from "../../types/error";
+import { FavoritesState } from "../../types/favorites";
+import { UserState } from "../../types/user";
 
 const mockStore = configureMockStore<RootState>([thunk]);
 

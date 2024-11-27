@@ -4,8 +4,9 @@ import "@testing-library/jest-dom";
 import Navbar from "../Navbar";
 import { Provider } from "react-redux";
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
-import userReducer, { UserState } from "../../redux/slices/userSlice";
+import userReducer from "../../redux/slices/userSlice";
 import { MemoryRouter } from "react-router-dom";
+import { UserState } from "../../types/user";
 
 interface MinimalRootState {
   user: UserState;

@@ -123,9 +123,9 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ forecastData }) => {
               fill="url(#temperatureGradient)" // Gradient fill
               fillOpacity={1}
               dot={{
-                r: 3, // Circle radius
-                stroke: "#ff6868", // Blue outline color
-                fill: "#00f7ff", // Blue fill color
+                r: 3,
+                stroke: "#ff6868",
+                fill: "#00f7ff",
               }}
             />
             {/* Add the ReferenceLine */}

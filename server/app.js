@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 
-import authRoutes from "./routes/auth.js";
-import weatherRoutes from "./routes/weather.js";
-import locationRoutes from "./routes/location.js";
+import authRoutes from "./routes/authRoute.js";
+import weatherRoutes from "./routes/weatherRoute.js";
+import locationRoutes from "./routes/locationRoute.js";
 
 const app = express();
 

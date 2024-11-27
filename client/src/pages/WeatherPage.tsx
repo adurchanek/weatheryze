@@ -20,6 +20,7 @@ const WeatherPage: React.FC = () => {
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
+    // Check and Set Favorite
     if (user.isAuthenticated && favorites.data && location) {
       setIsFavorite(
         favorites.data.some((favorite) => favorite.location === location),
@@ -28,6 +29,7 @@ const WeatherPage: React.FC = () => {
   }, [favorites.data, location, user.isAuthenticated]);
 
   useEffect(() => {
+    // Fetch Favorites
     if (
       user.isAuthenticated &&
       favorites.data === null &&
@@ -38,6 +40,7 @@ const WeatherPage: React.FC = () => {
   }, [dispatch, favorites.data, favorites.status, user.isAuthenticated]);
 
   useEffect(() => {
+    // Fetch Weather Data
     if (weather.currentLocation) {
       dispatch(fetchCurrentWeatherData(weather.currentLocation.name));
       dispatch(
@@ -51,12 +54,14 @@ const WeatherPage: React.FC = () => {
   }, [dispatch, weather.currentLocation]);
 
   useEffect(() => {
+    // Redirect on Invalid Location
     if (!weather.currentLocation && location) {
       navigate("/", { replace: true });
     }
-  }, [weather.currentLocation, location, dispatch]);
+  }, [weather.currentLocation, location]);
 
   useEffect(() => {
+    // Handle Weather Fetch Errors
     if (
       weather.current.status === "failed" ||
       weather.forecast.status === "failed"
@@ -67,6 +72,7 @@ const WeatherPage: React.FC = () => {
   }, [weather.current.status, weather.forecast.status, dispatch, navigate]);
 
   useEffect(() => {
+    // Handle Favorites Fetch Errors
     if (favorites.status === "failed") {
       dispatch(setError("Error fetching weather data"));
     }

@@ -15,6 +15,10 @@ import { Location } from "../../../types/location";
 
 const mockAxios = new MockAdapter(axiosInstance);
 
+jest.mock("../../../utils/getBaseUrl", () => ({
+  getBaseUrl: jest.fn(() => ""),
+}));
+
 describe("weatherSlice", () => {
   const initialState: WeatherState = {
     current: {

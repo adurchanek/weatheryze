@@ -1,9 +1,10 @@
 import axios from "axios";
 import { Store } from "redux";
 import { RootState } from "../redux/store";
+import { getBaseUrl } from "../utils/getBaseUrl";
 
 const axiosInstance = axios.create({
-  baseURL: "/api",
+  baseURL: getBaseUrl(),
 });
 
 let store: Store<RootState>;

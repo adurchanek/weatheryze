@@ -3,20 +3,25 @@ import { useAppDispatch } from "../hooks";
 import { loginSuccess } from "../redux/slices/userSlice";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { getBaseUrl } from "../utils/getBaseUrl";
 
 const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const baseURL = getBaseUrl();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/auth/login", { email, password });
+      const response = await axios.post(`${baseURL}/auth/login`, {
+        email,
+        password,
+      });
       const { token } = response.data;
 
-      const userResponse = await axios.get("/api/auth/user", {
+      const userResponse = await axios.get(`${baseURL}/auth/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

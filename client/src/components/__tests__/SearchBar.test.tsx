@@ -15,11 +15,13 @@ import { Location } from "../../types/location";
 import axiosInstance from "../../services/axiosInstance";
 import MockAdapter from "axios-mock-adapter";
 
-// Mock axiosInstance
 const mockAxios = new MockAdapter(axiosInstance);
 
-// Mock useNavigate
 const mockNavigate = jest.fn();
+
+jest.mock("../../utils/getBaseUrl", () => ({
+  getBaseUrl: jest.fn(() => ""),
+}));
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),

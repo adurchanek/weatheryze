@@ -33,6 +33,10 @@ interface MinimalRootState {
   error: ErrorState;
 }
 
+jest.mock("../../utils/getBaseUrl", () => ({
+  getBaseUrl: jest.fn(() => ""),
+}));
+
 describe("WeatherPage", () => {
   let store: EnhancedStore<MinimalRootState>;
 

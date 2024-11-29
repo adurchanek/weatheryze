@@ -7,11 +7,12 @@ import mongoose from "mongoose";
 import app from "./app.js";
 
 const server = http.createServer(app);
+const clientUrls = process.env.CLIENT_URLS.split(",");
 
 // Initialize Socket.io
 const io = new SocketIoServer(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: clientUrls,
     methods: ["GET", "POST"],
     credentials: true,
   },

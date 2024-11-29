@@ -6,6 +6,10 @@ import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "../../redux/store";
 
+jest.mock("../../utils/getBaseUrl", () => ({
+  getBaseUrl: jest.fn(() => ""),
+}));
+
 describe("HomePage", () => {
   it("renders the home page heading and the SearchBar component", () => {
     render(

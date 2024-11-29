@@ -14,6 +14,10 @@ interface MinimalRootState {
   user: UserState;
 }
 
+jest.mock("../../utils/getBaseUrl", () => ({
+  getBaseUrl: jest.fn(() => ""),
+}));
+
 describe("ProtectedRoute", () => {
   let store: EnhancedStore<MinimalRootState>;
 

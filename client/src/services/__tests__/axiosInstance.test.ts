@@ -52,6 +52,10 @@ const defaultLocationState: LocationState = {
   error: null,
 };
 
+jest.mock("../../utils/getBaseUrl", () => ({
+  getBaseUrl: jest.fn(() => ""),
+}));
+
 describe("axiosInstance Interceptors", () => {
   let store: MockStoreEnhanced<RootState, {}>;
   let mock: MockAdapter;

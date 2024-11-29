@@ -11,6 +11,10 @@ import { FavoritesState } from "../../../types/favorites";
 
 const mockAxios = new MockAdapter(axiosInstance);
 
+jest.mock("../../../utils/getBaseUrl", () => ({
+  getBaseUrl: jest.fn(() => ""),
+}));
+
 describe("favoritesSlice", () => {
   const initialState: FavoritesState = {
     data: null,

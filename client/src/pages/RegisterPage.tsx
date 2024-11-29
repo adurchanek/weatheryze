@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAppDispatch } from "../hooks";
 import { loginSuccess } from "../redux/slices/userSlice";
 import { useNavigate } from "react-router-dom";
+import { getBaseUrl } from "../utils/getBaseUrl";
 
 const RegisterPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -10,18 +11,19 @@ const RegisterPage: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const baseURL = getBaseUrl();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/auth/register", {
+      const response = await axios.post(`${baseURL}/auth/register`, {
         name,
         email,
         password,
       });
       const { token } = response.data;
 
-      const userResponse = await axios.get("/api/auth/user", {
+      const userResponse = await axios.get(`${baseURL}/auth/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

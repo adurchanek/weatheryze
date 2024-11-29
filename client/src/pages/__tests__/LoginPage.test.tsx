@@ -19,6 +19,10 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockNavigate,
 }));
 
+jest.mock("../../utils/getBaseUrl", () => ({
+  getBaseUrl: jest.fn(() => ""),
+}));
+
 interface RootState {
   user: UserState;
 }
@@ -75,14 +79,14 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByRole("button", { name: /Login/i }));
 
     await waitFor(() => {
-      expect(mockedAxios.post).toHaveBeenCalledWith("/api/auth/login", {
+      expect(mockedAxios.post).toHaveBeenCalledWith("/auth/login", {
         email: "test@example.com",
         password: "password123",
       });
     });
 
     await waitFor(() => {
-      expect(mockedAxios.get).toHaveBeenCalledWith("/api/auth/user", {
+      expect(mockedAxios.get).toHaveBeenCalledWith("/auth/user", {
         headers: { Authorization: `Bearer ${fakeToken}` },
       });
     });
@@ -122,7 +126,7 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByRole("button", { name: /Login/i }));
 
     await waitFor(() => {
-      expect(mockedAxios.post).toHaveBeenCalledWith("/api/auth/login", {
+      expect(mockedAxios.post).toHaveBeenCalledWith("/auth/login", {
         email: "wrong@example.com",
         password: "wrongpassword",
       });

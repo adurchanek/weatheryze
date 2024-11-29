@@ -9,6 +9,10 @@ import { Location, LocationState } from "../../../types/location";
 
 const mockAxios = new MockAdapter(axiosInstance);
 
+jest.mock("../../../utils/getBaseUrl", () => ({
+  getBaseUrl: jest.fn(() => ""),
+}));
+
 describe("locationsSlice", () => {
   const initialState: LocationState = {
     suggestions: {

@@ -33,6 +33,10 @@ interface MinimalRootState {
   favorites: FavoritesState;
 }
 
+jest.mock("../../utils/getBaseUrl", () => ({
+  getBaseUrl: jest.fn(() => ""),
+}));
+
 describe("FavoritesPage", () => {
   let store: EnhancedStore<MinimalRootState>;
 

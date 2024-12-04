@@ -7,7 +7,7 @@ import axiosInstance from "../../../services/axiosInstance";
 import { configureStore, Store } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import MockAdapter from "axios-mock-adapter";
-import { FavoritesState } from "../../../types/favorites";
+import { FavoriteLocation, FavoritesState } from "../../../types/favorites";
 
 const mockAxios = new MockAdapter(axiosInstance);
 
@@ -46,9 +46,35 @@ describe("favoritesSlice", () => {
     });
 
     it("should handle fetchFavorites fulfilled", async () => {
-      const favorites = [
-        { _id: "1", user: "user1", location: "Location 1", date: "2023-10-01" },
-        { _id: "2", user: "user1", location: "Location 2", date: "2023-10-02" },
+      const favorites: FavoriteLocation[] = [
+        {
+          _id: "1",
+          user: "user1",
+          name: "Location 1",
+          latitude: 40.7128,
+          longitude: -74.006,
+          date: "2023-10-01",
+          id: "40.7128,-74.006",
+          country: "United States",
+          countryCode: "US",
+          state: "New York",
+          stateCode: "NY",
+          zip: null,
+        },
+        {
+          _id: "2",
+          user: "user1",
+          name: "Location 2",
+          latitude: 45.7128,
+          longitude: -85.006,
+          date: "2023-10-02",
+          id: "40.7128,-74.006",
+          country: "United States",
+          countryCode: "US",
+          state: "New York",
+          stateCode: "NY",
+          zip: null,
+        },
       ];
 
       mockAxios.onGet("/weather/favorites").reply(200, favorites);
@@ -74,8 +100,34 @@ describe("favoritesSlice", () => {
   describe("deleteFavorite", () => {
     it("should handle deleteFavorite fulfilled", async () => {
       const initialData = [
-        { _id: "1", user: "user1", location: "Location 1", date: "2023-10-01" },
-        { _id: "2", user: "user1", location: "Location 2", date: "2023-10-02" },
+        {
+          _id: "1",
+          user: "user1",
+          name: "Location 1",
+          latitude: 40.7128,
+          longitude: -74.006,
+          id: "40.7128,-74.006",
+          country: "United States",
+          countryCode: "US",
+          state: "New York",
+          stateCode: "NY",
+          zip: null,
+          date: "2023-10-01",
+        },
+        {
+          _id: "2",
+          user: "user1",
+          name: "Location 2",
+          latitude: 45.7128,
+          longitude: -85.006,
+          id: "80.6128,-34.306",
+          country: "United States",
+          countryCode: "US",
+          state: "California",
+          stateCode: "CA",
+          zip: "90001",
+          date: "2023-10-02",
+        },
       ];
 
       store = configureStore({
@@ -102,18 +154,42 @@ describe("favoritesSlice", () => {
 
   describe("saveFavorite", () => {
     it("should handle saveFavorite fulfilled", async () => {
-      const newFavorite = {
+      const newFavorite: FavoriteLocation = {
         _id: "3",
         user: "user1",
-        location: "Location 3",
+        latitude: 40.7128,
+        longitude: -74.006,
+        name: "New York",
         date: "2023-10-03",
+        id: "40.7128,-74.006",
+        country: "United States",
+        countryCode: "US",
+        state: "New York",
+        stateCode: "NY",
+        zip: null,
       };
 
       mockAxios.onPost("/weather/favorites").reply(200, newFavorite);
 
-      await store.dispatch(saveFavorite("Location 3") as any);
+      await store.dispatch(
+        saveFavorite({
+          location: {
+            latitude: 40.7128,
+            longitude: -74.006,
+            name: "New York",
+            id: "40.7128,-74.006",
+            country: "United States",
+            countryCode: "US",
+            state: "New York",
+            stateCode: "NY",
+            zip: "10001",
+          },
+        }) as any,
+      );
 
       const state = store.getState().favorites;
+
+      // Assert that the state includes the new favorite
       expect(state.data).toEqual([newFavorite]);
     });
   });

@@ -1,5 +1,7 @@
 import locationsReducer, {
   fetchLocationsSuggestionsData,
+  fetchLocationByCoordinates,
+  clearSelectedLocation,
 } from "../locationSlice";
 import axiosInstance from "../../../services/axiosInstance";
 import { configureStore, Store } from "@reduxjs/toolkit";
@@ -19,6 +21,7 @@ describe("locationsSlice", () => {
       data: null,
       status: "idle",
     },
+    selectedLocation: null,
     error: null,
   };
 
@@ -89,7 +92,7 @@ describe("locationsSlice", () => {
     });
 
     it("should handle fetchLocationsSuggestionsData rejected", async () => {
-      mockAxios.onGet("/location/suggest?searchInput=New&limit=3").reply(404, {
+      mockAxios.onGet("/location/suggest?query=New&limit=3").reply(404, {
         message: "Location suggestion data not found",
       });
 
@@ -103,6 +106,83 @@ describe("locationsSlice", () => {
       const state = store.getState().location;
       expect(state.suggestions.status).toBe("failed");
       expect(state.suggestions.data).toBeNull();
+    });
+  });
+
+  describe("fetchLocationByCoordinates", () => {
+    it("should handle fetchLocationByCoordinates pending", () => {
+      const action = { type: fetchLocationByCoordinates.pending.type };
+      const state = locationsReducer(initialState, action);
+      expect(state.selectedLocation).toBeNull();
+      expect(state.error).toBeNull();
+    });
+
+    it("should handle fetchLocationByCoordinates fulfilled", async () => {
+      const locationData: Location = {
+        id: "40.7128,-74.006",
+        name: "New York",
+        latitude: 40.7128,
+        longitude: -74.006,
+        country: "USA",
+        countryCode: "US",
+        state: "New York",
+        stateCode: "NY",
+        zip: "10001",
+      };
+
+      mockAxios
+        .onGet("/location/coordinates?latitude=40.7128&longitude=-74.006")
+        .reply(200, locationData);
+
+      await store.dispatch(
+        fetchLocationByCoordinates({
+          latitude: 40.7128,
+          longitude: -74.006,
+        }) as any,
+      );
+
+      const state = store.getState().location;
+      expect(state.selectedLocation).toEqual(locationData);
+      expect(state.error).toBeNull();
+    });
+
+    it("should handle fetchLocationByCoordinates rejected", async () => {
+      mockAxios
+        .onGet("/location/coordinates?latitude=40.7128&longitude=-74.006")
+        .reply(404, { message: "Location not found" });
+
+      await store.dispatch(
+        fetchLocationByCoordinates({
+          latitude: 40.7128,
+          longitude: -74.006,
+        }) as any,
+      );
+
+      const state = store.getState().location;
+      expect(state.selectedLocation).toBeNull();
+      expect(state.error).toBe("Location not found");
+    });
+  });
+
+  describe("clearSelectedLocation", () => {
+    it("should handle clearSelectedLocation action", () => {
+      const mockState: LocationState = {
+        ...initialState,
+        selectedLocation: {
+          id: "40.7128,-74.006",
+          name: "New York",
+          latitude: 40.7128,
+          longitude: -74.006,
+          country: "USA",
+          countryCode: "US",
+          state: "New York",
+          stateCode: "NY",
+          zip: "10001",
+        },
+      };
+
+      const state = locationsReducer(mockState, clearSelectedLocation());
+      expect(state.selectedLocation).toBeNull();
     });
   });
 });

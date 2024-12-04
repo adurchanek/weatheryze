@@ -15,7 +15,7 @@ const clientUrls = process.env.CLIENT_URLS.split(",");
 app.use(
   cors({
     origin: [clientUrls],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "DELETE"],
     credentials: true,
   }),
 );

@@ -55,7 +55,7 @@ describe("SearchBar", () => {
   it("navigates to the correct URL when a valid location is submitted", async () => {
     const suggestions = [
       {
-        id: "Pennewang-AT-4",
+        id: "48.13333-13.85",
         name: "Pennewang",
         latitude: 48.13333,
         longitude: 13.85,
@@ -97,7 +97,7 @@ describe("SearchBar", () => {
 
     // Assert that navigate was called with the correct URL
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith("/weather/Pennewang");
+      expect(mockNavigate).toHaveBeenCalledWith("/weather/48.13333-13.85");
     });
   });
 
@@ -350,7 +350,7 @@ describe("SearchBar", () => {
   it("navigates to the weather page when a suggestion is clicked", async () => {
     const suggestions: Location[] = [
       {
-        id: "Pennewang-AT-4",
+        id: "48.13333-13.85",
         name: "Pennewang",
         latitude: 48.13333,
         longitude: 13.85,
@@ -389,7 +389,7 @@ describe("SearchBar", () => {
 
     // Assert that navigate was called
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith("/weather/Pennewang");
+      expect(mockNavigate).toHaveBeenCalledWith("/weather/48.13333-13.85");
     });
   });
 });

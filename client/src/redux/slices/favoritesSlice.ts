@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axiosInstance from "../../services/axiosInstance";
 import { FavoriteLocation, FavoritesState } from "../../types/favorites";
+import { SaveFavoriteParams } from "../../types/favorites";
 
 const initialState: FavoritesState = {
   data: null,
@@ -24,13 +25,23 @@ export const deleteFavorite = createAsyncThunk(
   },
 );
 
-export const saveFavorite = createAsyncThunk(
+export const saveFavorite = createAsyncThunk<
+  FavoriteLocation,
+  SaveFavoriteParams,
+  { rejectValue: string }
+>(
   "favorites/saveFavorite",
-  async (location: string) => {
-    const response = await axiosInstance.post("/weather/favorites", {
-      location,
-    });
-    return response.data as FavoriteLocation;
+  async ({ location }: SaveFavoriteParams, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/weather/favorites", {
+        location,
+      });
+      return response.data as FavoriteLocation;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || error.message || "Unknown error",
+      );
+    }
   },
 );
 

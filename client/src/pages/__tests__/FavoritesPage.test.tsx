@@ -16,11 +16,10 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import thunk from "redux-thunk";
 import axiosInstance from "../../services/axiosInstance";
 import MockAdapter from "axios-mock-adapter";
-import { FavoritesState } from "../../types/favorites";
+import { FavoriteLocation, FavoritesState } from "../../types/favorites";
 
 const mockAxios = new MockAdapter(axiosInstance);
 
-// Mock useNavigate from react-router-dom
 const mockNavigate = jest.fn();
 
 jest.mock("react-router-dom", () => ({
@@ -52,8 +51,8 @@ describe("FavoritesPage", () => {
     mockNavigate.mockReset();
   });
 
-  it("displays loading state initially", async () => {
-    mockAxios.onGet("/weather/favorites").reply(() => new Promise(() => {})); // Keeps promise pending
+  it("displays message when no favorite locations are saved", async () => {
+    mockAxios.onGet("/weather/favorites").reply(200, []);
 
     await act(async () => {
       render(
@@ -67,13 +66,20 @@ describe("FavoritesPage", () => {
       );
     });
 
-    expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText(/No favorite locations saved/i),
+      ).toBeInTheDocument();
+    });
+
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.queryAllByRole("listitem")).toHaveLength(0);
   });
 
   it("displays favorite locations after successful fetch", async () => {
     const favorites = [
-      { _id: "1", user: "user1", location: "New York", date: "2023-10-01" },
-      { _id: "2", user: "user1", location: "Los Angeles", date: "2023-10-02" },
+      { _id: "1", user: "user1", name: "New York", date: "2023-10-01" },
+      { _id: "2", user: "user1", name: "Los Angeles", date: "2023-10-02" },
     ];
 
     mockAxios.onGet("/weather/favorites").reply(200, favorites);
@@ -91,7 +97,7 @@ describe("FavoritesPage", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText(/Your Favorite Locations/i)).toBeInTheDocument();
+      expect(screen.getByText(/Favorites/i)).toBeInTheDocument();
       expect(screen.getByText(/New York/i)).toBeInTheDocument();
       expect(screen.getByText(/Los Angeles/i)).toBeInTheDocument();
     });
@@ -119,8 +125,8 @@ describe("FavoritesPage", () => {
 
   it("deletes a favorite location on delete button click", async () => {
     const favorites = [
-      { _id: "1", user: "user1", location: "New York", date: "2023-10-01" },
-      { _id: "2", user: "user1", location: "Los Angeles", date: "2023-10-02" },
+      { _id: "1", user: "user1", name: "New York", date: "2023-10-01" },
+      { _id: "2", user: "user1", name: "Los Angeles", date: "2023-10-02" },
     ];
 
     mockAxios.onGet("/weather/favorites").reply(200, favorites);
@@ -143,11 +149,12 @@ describe("FavoritesPage", () => {
       expect(screen.getByText(/Los Angeles/i)).toBeInTheDocument();
     });
 
-    // Find all "Delete" buttons and click the first one (for "New York")
-    const deleteButtons = screen.getAllByRole("button", { name: /Delete/i });
-    expect(deleteButtons.length).toBe(2); // Ensure there are two delete buttons
+    const removeFavoriteButtons = screen.getAllByRole("button", {
+      name: /Remove Favorite/i,
+    });
+    expect(removeFavoriteButtons.length).toBe(2); // Ensure there are two buttons
 
-    fireEvent.click(deleteButtons[0]);
+    fireEvent.click(removeFavoriteButtons[0]);
 
     await waitFor(() => {
       expect(screen.queryByText(/New York/i)).not.toBeInTheDocument();
@@ -155,9 +162,22 @@ describe("FavoritesPage", () => {
     });
   });
 
-  it("navigates to weather page when 'View Weather' button is clicked", async () => {
-    const favorites = [
-      { _id: "1", user: "user1", location: "New York", date: "2023-10-01" },
+  it("navigates to weather page when 'View' button is clicked", async () => {
+    const favorites: FavoriteLocation[] = [
+      {
+        _id: "1",
+        user: "user1",
+        name: "New York",
+        date: "2023-10-01",
+        latitude: 40.7128,
+        longitude: -74.006,
+        id: "40.7128,-74.006",
+        country: "United States",
+        countryCode: "US",
+        state: "New York",
+        stateCode: "NY",
+        zip: null,
+      },
     ];
 
     mockAxios.onGet("/weather/favorites").reply(200, favorites);
@@ -179,11 +199,74 @@ describe("FavoritesPage", () => {
     });
 
     const viewWeatherButton = screen.getByRole("button", {
-      name: /View Weather/i,
+      name: /View/i,
     });
     fireEvent.click(viewWeatherButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith("/weather/New%20York");
+    expect(mockNavigate).toHaveBeenCalledWith("/weather/40.7128%2C-74.006");
     expect(mockNavigate).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows 'Unfavoriting...' state when a favorite is being removed", async () => {
+    const favorites = [
+      { _id: "1", user: "user1", name: "New York", date: "2023-10-01" },
+    ];
+
+    mockAxios.onGet("/weather/favorites").reply(200, favorites);
+    mockAxios.onDelete("/weather/favorites/1").reply(200);
+
+    await act(async () => {
+      render(
+        <Provider store={store}>
+          <MemoryRouter initialEntries={["/favorites"]}>
+            <Routes>
+              <Route path="/favorites" element={<FavoritesPage />} />
+            </Routes>
+          </MemoryRouter>
+        </Provider>,
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/New York/i)).toBeInTheDocument();
+    });
+
+    const removeFavoriteButton = screen.getByRole("button", {
+      name: /Remove Favorite/i,
+    });
+    fireEvent.click(removeFavoriteButton);
+
+    expect(screen.getByAltText(/Unfavoriting.../i)).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.queryByText(/New York/i)).not.toBeInTheDocument();
+    });
+  });
+
+  it("navigates to the homepage when 'Add Your First Favorite' button is clicked in empty state", async () => {
+    mockAxios.onGet("/weather/favorites").reply(200, []);
+
+    await act(async () => {
+      render(
+        <Provider store={store}>
+          <MemoryRouter initialEntries={["/favorites"]}>
+            <Routes>
+              <Route path="/favorites" element={<FavoritesPage />} />
+            </Routes>
+          </MemoryRouter>
+        </Provider>,
+      );
+    });
+
+    expect(
+      screen.getByText(/No favorite locations saved/i),
+    ).toBeInTheDocument();
+
+    const addFavoriteButton = screen.getByRole("button", {
+      name: /Add Your First Favorite/i,
+    });
+    fireEvent.click(addFavoriteButton);
+
+    expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 });

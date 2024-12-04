@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchLocationsSuggestionsData } from "../redux/slices/locationSlice";
 import { useAppSelector, useAppDispatch } from "../hooks";
 import { Location } from "../types/location";
-import { setCurrentLocation } from "../redux/slices/weatherSlice";
+import { clearData, setCurrentLocation } from "../redux/slices/weatherSlice";
 
 const SearchBar: React.FC = () => {
   const [locationInput, setLocationInput] = useState("");
@@ -18,12 +18,16 @@ const SearchBar: React.FC = () => {
   const status = useAppSelector((state) => state.location?.suggestions.status);
   const error = useAppSelector((state) => state.location?.error);
 
+  useEffect(() => {
+    dispatch(clearData());
+  }, [dispatch]);
+
   const handleSuggestionClick = (suggestion: Location) => {
     // Dispatch the selected location to the weather slice
     dispatch(setCurrentLocation(suggestion));
 
     // Navigate to the weather page
-    navigate(`/weather/${encodeURIComponent(suggestion.name)}`);
+    navigate(`/weather/${encodeURIComponent(suggestion.id)}`);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -38,7 +42,7 @@ const SearchBar: React.FC = () => {
         dispatch(setCurrentLocation(selectedLocation));
 
         // Navigate to the weather page
-        navigate(`/weather/${encodeURIComponent(selectedLocation.name)}`);
+        navigate(`/weather/${encodeURIComponent(selectedLocation.id)}`);
       }
     }
   };

@@ -21,13 +21,17 @@ router.get("/current", getCurrentWeather);
 // @access  Public
 router.get("/forecast", getForecast);
 
-// @route   POST /api/weather/favorites
-// @desc    Save a favorite location
-// @access  Private
 router.post(
   "/favorites",
   auth,
-  [check("location", "Location is required").notEmpty()],
+  [
+    check("location.name", "Name is required").notEmpty(),
+    check("location.latitude", "Latitude is required").notEmpty(),
+    check("location.longitude", "Longitude is required").notEmpty(),
+    check("location.country", "Country is required").notEmpty(),
+    check("location.countryCode", "Country code is required").notEmpty(),
+    check("location.id", "Location ID is required").notEmpty(),
+  ],
   saveFavoriteLocation,
 );
 

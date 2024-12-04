@@ -13,7 +13,7 @@ const clientUrls = process.env.CLIENT_URLS.split(",");
 const io = new SocketIoServer(server, {
   cors: {
     origin: clientUrls,
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "DELETE"],
     credentials: true,
   },
 });

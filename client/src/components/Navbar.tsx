@@ -44,7 +44,10 @@ const Navbar: React.FC = () => {
           {user.isAuthenticated ? (
             <>
               <span className="text-gray-600">
-                Welcome, {user.userInfo?.name}
+                Welcome,{" "}
+                <span className="text-gray-400 font-bold italic">
+                  {user.userInfo?.name}
+                </span>
               </span>
               <button
                 onClick={handleLogout}
@@ -121,14 +124,17 @@ const Navbar: React.FC = () => {
           {user.isAuthenticated ? (
             <>
               <span className="text-gray-600">
-                Welcome, {user.userInfo?.name}
+                Welcome,{" "}
+                <span className="text-gray-400 font-bold italic">
+                  {user.userInfo?.name}
+                </span>
               </span>
               <button
                 onClick={() => {
                   handleLogout();
                   setIsMenuOpen(false);
                 }}
-                className="px-3 py-1 bg-gray-700 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 mt-2"
+                className="px-3 py-1 bg-gray-700 text-white rounded-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 mt-2"
               >
                 Logout
               </button>

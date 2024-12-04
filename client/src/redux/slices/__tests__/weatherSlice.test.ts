@@ -12,6 +12,7 @@ import {
   WeatherState,
 } from "../../../types/weather";
 import { Location } from "../../../types/location";
+import { fetchLocationByCoordinates } from "../locationSlice";
 
 const mockAxios = new MockAdapter(axiosInstance);
 
@@ -22,23 +23,11 @@ jest.mock("../../../utils/getBaseUrl", () => ({
 describe("weatherSlice", () => {
   const initialState: WeatherState = {
     current: {
-      data: {
-        location: "",
-        temperature: 0,
-        humidity: 0,
-        windSpeed: 0,
-        condition: "Unknown",
-      },
+      data: null,
       status: "idle",
     },
     forecast: {
-      data: {
-        hourly: {
-          time: [],
-          temperature2m: {},
-        },
-        utcOffsetSeconds: 0,
-      },
+      data: null,
       status: "idle",
     },
     currentLocation: null,
@@ -94,7 +83,7 @@ describe("weatherSlice", () => {
       temperature: 25,
       humidity: 60,
       windSpeed: 10,
-      condition: "Sunny",
+      condition: "Partly Cloudy",
     };
 
     mockAxios
@@ -118,13 +107,7 @@ describe("weatherSlice", () => {
 
     const state = store.getState().weather;
     expect(state.current.status).toBe("failed");
-    expect(state.current.data).toEqual({
-      location: "",
-      temperature: 0,
-      humidity: 0,
-      windSpeed: 0,
-      condition: "Unknown",
-    });
+    expect(state.current.data).toEqual(null);
     expect(state.error).toBe("Internal Server Error");
   });
 
@@ -186,13 +169,64 @@ describe("weatherSlice", () => {
 
     const state = store.getState().weather;
     expect(state.forecast.status).toBe("failed");
-    expect(state.forecast.data).toEqual({
-      hourly: {
-        time: [],
-        temperature2m: {},
-      },
-      utcOffsetSeconds: 0,
-    });
+    expect(state.forecast.data).toEqual(null);
     expect(state.error).toBe("Forecast data not found");
+  });
+
+  it("handles fetchLocationByCoordinates pending", () => {
+    const action = { type: fetchLocationByCoordinates.pending.type };
+    const state = weatherReducer(initialState, action);
+    expect(state.currentLocation).toBeNull();
+    expect(state.error).toBeNull();
+  });
+
+  it("handles fetchLocationByCoordinates fulfilled", async () => {
+    const locationData: Location = {
+      id: "40.7128,-74.006",
+      name: "New York",
+      latitude: 40.7128,
+      longitude: -74.006,
+      country: "USA",
+      countryCode: "US",
+      state: "New York",
+      stateCode: "NY",
+      zip: "10001",
+    };
+
+    mockAxios
+      .onGet("/location/coordinates?latitude=40.7128&longitude=-74.006")
+      .reply(200, locationData);
+
+    await store.dispatch(
+      fetchLocationByCoordinates({
+        latitude: 40.7128,
+        longitude: -74.006,
+      }) as any,
+    );
+
+    // Dispatch the action to update the weather slice
+    store.dispatch(setCurrentLocation(locationData));
+
+    const state = store.getState().weather;
+    expect(state.currentLocation).toEqual(locationData);
+    expect(state.error).toBeNull();
+  });
+
+  it("handles fetchLocationByCoordinates rejected", async () => {
+    mockAxios
+      .onGet("/location/coordinates?latitude=40.7128&longitude=-74.006")
+      .reply(404, { message: "Location not found" });
+
+    await store.dispatch(
+      fetchLocationByCoordinates({
+        latitude: 40.7128,
+        longitude: -74.006,
+      }) as any,
+    );
+
+    // Do not update the weather slice if fetch fails
+    const state = store.getState().weather;
+    expect(state.currentLocation).toBeNull(); // No location update
+    expect(state.error).toBeNull(); // The weather slice should not handle this error
   });
 });

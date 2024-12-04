@@ -49,6 +49,7 @@ const defaultLocationState: LocationState = {
     data: null,
     status: "idle",
   },
+  selectedLocation: null,
   error: null,
 };
 

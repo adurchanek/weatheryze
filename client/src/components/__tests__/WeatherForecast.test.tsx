@@ -23,6 +23,8 @@ jest.mock("recharts", () => {
         aria-label={label?.value || "Reference Line"}
       />
     ),
+    Legend: () => <div data-testid="legend" />,
+    Dot: () => <circle data-testid="dot" />,
   };
 });
 

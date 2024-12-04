@@ -5,7 +5,7 @@ import fetchWeather from "../services/weatherService.js";
 // Dummy data for weather and location search
 const dummyWeatherData = {
   temperature: 25,
-  condition: "Sunny",
+  condition: "Partly Cloudy",
   humidity: 50,
   windSpeed: 10,
 };
@@ -63,12 +63,43 @@ export const saveFavoriteLocation = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const { location } = req.body;
+
+  const {
+    id,
+    name,
+    latitude,
+    longitude,
+    country,
+    countryCode,
+    state,
+    stateCode,
+    zip,
+  } = req.body.location;
 
   try {
+    // Check if the favorite already exists for this user
+    const existingFavorite = await FavoriteLocation.findOne({
+      user: req.user.id,
+      id,
+    });
+
+    if (existingFavorite) {
+      return res
+        .status(400)
+        .json({ msg: "This location is already a favorite" });
+    }
+
     const newFavorite = new FavoriteLocation({
       user: req.user.id,
-      location,
+      name,
+      latitude,
+      longitude,
+      id,
+      country,
+      countryCode,
+      state,
+      stateCode,
+      zip,
     });
     const favorite = await newFavorite.save();
     res.json(favorite);

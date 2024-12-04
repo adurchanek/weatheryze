@@ -102,27 +102,77 @@ describe("Weather Routes", () => {
       const res = await request(app)
         .post("/api/weather/favorites")
         .set("Authorization", `Bearer ${token}`)
-        .send({ location: "New York" });
+        .send({
+          location: {
+            id: "40.7128,-74.006",
+            name: "New York",
+            latitude: 40.7128,
+            longitude: -74.006,
+            country: "United States",
+            countryCode: "US",
+            state: "New York",
+            stateCode: "NY",
+            zip: "10001",
+          },
+        });
 
       expect(res.statusCode).toBe(200);
-      expect(res.body).toHaveProperty("location", "New York");
+
+      // Verify all the fields in the response body
+      expect(res.body).toHaveProperty("name", "New York");
+      expect(res.body).toHaveProperty("latitude", 40.7128);
+      expect(res.body).toHaveProperty("longitude", -74.006);
+      expect(res.body).toHaveProperty("id", "40.7128,-74.006");
       expect(res.body).toHaveProperty("user");
+      expect(typeof res.body.user).toBe("string");
+      expect(res.body).toHaveProperty("country", "United States");
+      expect(res.body).toHaveProperty("countryCode", "US");
+      expect(res.body).toHaveProperty("state", "New York");
+      expect(res.body).toHaveProperty("stateCode", "NY");
+      expect(res.body).toHaveProperty("zip", "10001");
+      expect(res.body).toHaveProperty("date");
+      expect(new Date(res.body.date).toString()).not.toBe("Invalid Date");
+
+      // Check for unexpected fields
+      const expectedKeys = [
+        "__v",
+        "_id",
+        "name",
+        "latitude",
+        "longitude",
+        "id",
+        "user",
+        "country",
+        "countryCode",
+        "state",
+        "stateCode",
+        "zip",
+        "date",
+      ];
+      expect(Object.keys(res.body).sort()).toEqual(expectedKeys.sort());
     });
 
-    it("should return an error if location is not provided", async () => {
+    it("should return an error if name is not provided", async () => {
       const res = await request(app)
         .post("/api/weather/favorites")
         .set("Authorization", `Bearer ${token}`)
         .send({});
 
       expect(res.statusCode).toBe(400);
-      expect(res.body.errors[0].msg).toBe("Location is required");
+      expect(res.body.errors[0].msg).toBe("Name is required");
     });
 
     it("should return an error if not authenticated", async () => {
-      const res = await request(app)
-        .post("/api/weather/favorites")
-        .send({ location: "New York" });
+      const res = await request(app).post("/api/weather/favorites").send({
+        name: "New York",
+        latitude: 40.7128,
+        longitude: -74.006,
+        country: "United States",
+        countryCode: "US",
+        state: "New York",
+        stateCode: "NY",
+        zip: null,
+      });
 
       expect(res.statusCode).toBe(401);
       expect(res.body.msg).toBe("No token, authorization denied");
@@ -133,8 +183,29 @@ describe("Weather Routes", () => {
     it("should get all favorite locations for the user", async () => {
       // Add a favorite location
       await FavoriteLocation.create({
-        user: userId, // Use the stored user ID
-        location: "New York",
+        user: userId,
+        name: "New York",
+        latitude: 40.7128,
+        longitude: -74.006,
+        id: "40.7128,-74.006",
+        country: "United States",
+        countryCode: "US",
+        state: "New York",
+        stateCode: "NY",
+        zip: null,
+      });
+
+      await FavoriteLocation.create({
+        user: userId,
+        name: "Los Angeles",
+        latitude: 80.6128,
+        longitude: -34.306,
+        id: "80.6128,-34.306",
+        country: "United States",
+        countryCode: "US",
+        state: "California",
+        stateCode: "CA",
+        zip: "90001",
       });
 
       const res = await request(app)
@@ -142,8 +213,15 @@ describe("Weather Routes", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.statusCode).toBe(200);
-      expect(res.body.length).toBe(1);
-      expect(res.body[0]).toHaveProperty("location", "New York");
+      expect(res.body.length).toBe(2);
+      expect(res.body[0]).toHaveProperty("name", "New York");
+      expect(res.body[0]).toHaveProperty("latitude", 40.7128);
+      expect(res.body[0]).toHaveProperty("longitude", -74.006);
+      expect(res.body[0]).toHaveProperty("zip", null);
+      expect(res.body[1]).toHaveProperty("name", "Los Angeles");
+      expect(res.body[1]).toHaveProperty("latitude", 80.6128);
+      expect(res.body[1]).toHaveProperty("longitude", -34.306);
+      expect(res.body[1]).toHaveProperty("zip", "90001");
     });
 
     it("should return an error if not authenticated", async () => {
@@ -158,12 +236,20 @@ describe("Weather Routes", () => {
     it("should delete a favorite location", async () => {
       // Add a favorite location
       const favorite = await FavoriteLocation.create({
-        user: userId, // Use the stored user ID
-        location: "New York",
+        user: userId,
+        name: "New York",
+        latitude: 40.7128,
+        longitude: -74.006,
+        id: "40.7128,-74.006",
+        country: "United States",
+        countryCode: "US",
+        state: "New York",
+        stateCode: "NY",
+        zip: null,
       });
 
       const res = await request(app)
-        .delete(`/api/weather/favorites/${favorite.id}`)
+        .delete(`/api/weather/favorites/${favorite._id}`)
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.statusCode).toBe(200);
@@ -184,11 +270,19 @@ describe("Weather Routes", () => {
       const otherUserId = new mongoose.Types.ObjectId();
       const favorite = await FavoriteLocation.create({
         user: otherUserId,
-        location: "London",
+        name: "London",
+        latitude: 40.7128,
+        longitude: -74.006,
+        id: "40.7128,-74.006",
+        country: "United States",
+        countryCode: "US",
+        state: "New York",
+        stateCode: "NY",
+        zip: null,
       });
 
       const res = await request(app)
-        .delete(`/api/weather/favorites/${favorite.id}`)
+        .delete(`/api/weather/favorites/${favorite._id}`)
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.statusCode).toBe(401);

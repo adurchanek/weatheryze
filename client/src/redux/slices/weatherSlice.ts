@@ -10,29 +10,18 @@ import { Location } from "../../types/location";
 
 const initialState: WeatherState = {
   current: {
-    data: {
-      location: "",
-      temperature: 0,
-      humidity: 0,
-      windSpeed: 0,
-      condition: "Unknown",
-    },
+    data: null,
     status: "idle",
   },
   forecast: {
-    data: {
-      hourly: {
-        time: [],
-        temperature2m: {},
-      },
-      utcOffsetSeconds: 0,
-    },
+    data: null,
     status: "idle",
   },
   currentLocation: null,
   error: null,
 };
 
+// Fetch current weather data by location name
 export const fetchCurrentWeatherData = createAsyncThunk(
   "weather/fetchCurrentWeatherData",
   async (location: string, { rejectWithValue }) => {
@@ -49,6 +38,7 @@ export const fetchCurrentWeatherData = createAsyncThunk(
   },
 );
 
+// Fetch forecast weather data based on coordinates
 export const fetchLocationBasedForecastWeatherData = createAsyncThunk<
   ForecastData,
   CoordinatesParams,
@@ -58,7 +48,9 @@ export const fetchLocationBasedForecastWeatherData = createAsyncThunk<
   async ({ latitude, longitude, timezone }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get<ForecastData>(
-        `/weather/forecast?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(
+        `/weather/forecast?latitude=${encodeURIComponent(
+          latitude,
+        )}&longitude=${encodeURIComponent(
           longitude,
         )}&timezone=${encodeURIComponent(timezone)}`,
       );
@@ -78,6 +70,12 @@ const weatherSlice = createSlice({
     setCurrentLocation(state, action: PayloadAction<Location | null>) {
       state.currentLocation = action.payload;
     },
+    clearWeatherError(state) {
+      state.error = null;
+    },
+    clearData(state) {
+      Object.assign(state, initialState);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -95,13 +93,7 @@ const weatherSlice = createSlice({
       .addCase(fetchCurrentWeatherData.rejected, (state, action) => {
         state.current.status = "failed";
         state.error = action.payload as string;
-        state.current.data = {
-          location: "",
-          temperature: 0,
-          humidity: 0,
-          windSpeed: 0,
-          condition: "Unknown",
-        };
+        state.current.data = null;
       });
 
     builder
@@ -121,18 +113,13 @@ const weatherSlice = createSlice({
         (state, action) => {
           state.forecast.status = "failed";
           state.error = action.payload as string;
-          state.forecast.data = {
-            hourly: {
-              time: [],
-              temperature2m: {},
-            },
-            utcOffsetSeconds: 0,
-          };
+          state.forecast.data = null;
         },
       );
   },
 });
 
-export const { setCurrentLocation } = weatherSlice.actions;
+export const { setCurrentLocation, clearWeatherError, clearData } =
+  weatherSlice.actions;
 
 export default weatherSlice.reducer;

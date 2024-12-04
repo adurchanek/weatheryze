@@ -20,5 +20,6 @@ export interface LocationState {
     data: Location[] | null;
     status: "idle" | "loading" | "succeeded" | "failed";
   };
+  selectedLocation: Location | null;
   error: string | null;
 }

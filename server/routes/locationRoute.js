@@ -1,5 +1,8 @@
 import express from "express";
-import { suggestLocations } from "../controllers/locationController.js";
+import {
+  getLocationByCoordinates,
+  suggestLocations,
+} from "../controllers/locationController.js";
 
 const router = express.Router();
 
@@ -7,5 +10,10 @@ const router = express.Router();
 // @desc    Suggest locations
 // @access  Public
 router.get("/suggest", suggestLocations);
+
+// @route   GET /api/location/coordinates
+// @desc    Get location details by latitude and longitude
+// @access  Public
+router.get("/coordinates", getLocationByCoordinates);
 
 export default router;

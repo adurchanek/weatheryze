@@ -72,7 +72,8 @@ describe("Navbar", () => {
 
     // Check for 'Favorites' and 'Logout' links
     expect(screen.getAllByText(/Favorites/i)).toHaveLength(2); // Desktop and mobile versions
-    expect(screen.getAllByText(/Welcome, John Doe/i)).toHaveLength(2); // Desktop and mobile versions
+    expect(screen.getAllByText(/Welcome/i)).toHaveLength(2); // Desktop and mobile versions
+    expect(screen.getAllByText(/John Doe/i)).toHaveLength(2); // Desktop and mobile versions
     expect(screen.getAllByText(/Logout/i)).toHaveLength(2); // Desktop and mobile versions
     expect(screen.queryByText(/Login/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Register/i)).not.toBeInTheDocument();

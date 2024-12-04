@@ -26,7 +26,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (token) {
-      dispatch(loadUserStart()); // Start loading
+      dispatch(loadUserStart());
       axiosInstance
         .get("/auth/user")
         .then((response) => {
@@ -34,7 +34,7 @@ const App: React.FC = () => {
         })
         .catch((error) => {
           console.error("Failed to load user:", error);
-          dispatch(loadUserFailure()); // Stop loading on failure
+          dispatch(loadUserFailure());
         });
     }
   }, [dispatch, token]);
@@ -49,15 +49,17 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="flex flex-col min-h-screen bg-gray-100">
+      <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-blue-50">
         <Navbar />
         <ErrorNotification />
-        <main className="flex-grow flex justify-center bg-gradient-to-br from-blue-100 via-purple-50 to-indigo-50 px-2 sm:px-4">
-          <div className="w-full max-w-7xl px-4 py-6">
+        <main className="flex-grow flex justify-center">
+          <div className="w-full bg-gradient-to-br from-blue-50 to-white  shadow-lg">
             <Suspense
               fallback={
                 <div className="flex justify-center items-center min-h-screen">
-                  Loading...
+                  <div className="text-blue-500 font-bold text-lg">
+                    Loading...
+                  </div>
                 </div>
               }
             >

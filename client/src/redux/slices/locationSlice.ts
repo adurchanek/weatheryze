@@ -11,9 +11,11 @@ const initialState: LocationState = {
     data: null,
     status: "idle",
   },
+  selectedLocation: null,
   error: null,
 };
 
+// Fetch location suggestions based on user input
 export const fetchLocationsSuggestionsData = createAsyncThunk<
   Location[],
   LocationSearchParams,
@@ -36,10 +38,39 @@ export const fetchLocationsSuggestionsData = createAsyncThunk<
   },
 );
 
+// Fetch location details by latitude and longitude
+export const fetchLocationByCoordinates = createAsyncThunk<
+  Location,
+  { latitude: number; longitude: number },
+  { rejectValue: string }
+>(
+  "location/fetchLocationByCoordinates",
+  async ({ latitude, longitude }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get<Location>(
+        `/location/coordinates?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(
+          longitude,
+        )}`,
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to fetch location by coordinates.",
+      );
+    }
+  },
+);
+
 const locationSlice = createSlice({
   name: "location",
-  initialState: initialState,
-  reducers: {},
+  initialState,
+  reducers: {
+    clearSelectedLocation(state) {
+      state.selectedLocation = null; // Clear selected location
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchLocationsSuggestionsData.pending, (state) => {
@@ -57,8 +88,24 @@ const locationSlice = createSlice({
         state.suggestions.status = "failed";
         state.error = action.payload as string;
         state.suggestions.data = null;
+      })
+      .addCase(fetchLocationByCoordinates.pending, (state) => {
+        state.selectedLocation = null;
+        state.error = null;
+      })
+      .addCase(
+        fetchLocationByCoordinates.fulfilled,
+        (state, action: PayloadAction<Location>) => {
+          state.selectedLocation = action.payload;
+        },
+      )
+      .addCase(fetchLocationByCoordinates.rejected, (state, action) => {
+        state.selectedLocation = null;
+        state.error = action.payload as string;
       });
   },
 });
+
+export const { clearSelectedLocation } = locationSlice.actions;
 
 export default locationSlice.reducer;

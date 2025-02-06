@@ -1,0 +1,31 @@
+{
+  "type": "module",
+  "name": "notifyweatheruser",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "NODE_ENV=production node src/index.js",
+    "dev": "NODE_ENV=development nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-ssm": "^3.716.0",
+    "@aws-sdk/client-dynamodb": "^3.731.1",
+    "@aws-sdk/client-ses": "^3.731.1",
+    "@aws-sdk/lib-dynamodb": "^3.731.1",
+    "amqplib": "^0.10.5",
+    "aws-sdk": "^2.1692.0",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

@@ -1,0 +1,151 @@
+services:
+  backend:
+    build:
+      context: ./server
+    ports:
+      - "5002:5002"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    depends_on:
+      - redis
+      - postgres
+      - rabbitmq
+    restart: always
+    networks:
+      - app-network
+
+  location-service:
+    build:
+      context: ./location-service
+    ports:
+      - "5003:5003"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+    depends_on:
+      - redis
+      - postgres
+      - rabbitmq
+    restart: always
+    networks:
+      - app-network
+
+  ai-service:
+    build:
+      context: ./ai-service
+    ports:
+      - "5004:5004"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+    depends_on:
+      - redis
+      - postgres
+      - rabbitmq
+    restart: always
+    networks:
+      - app-network
+
+  logging-service:
+    build:
+      context: ./logging-service
+    ports:
+      - "5005:5005"
+    environment:
+      - LOGGING_LEVEL=INFO
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - app-network
+
+  notification-service:
+    build:
+      context: ./notification-service
+    ports:
+      - "5006:5006"
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+    volumes:
+      - ./notification-service:/app
+      - /app/node_modules
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - app-network
+
+  messaging-service:
+    build:
+      context: ./messaging-service
+    ports:
+      - "5007:5007"
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+    volumes:
+      - ./messaging-service:/app
+      - /app/node_modules
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    restart: always
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=your_secure_password_here
+      - POSTGRES_DB=weatheryze_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - redis-data:/data
+    restart: always
+    networks:
+      - app-network
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  app-network:

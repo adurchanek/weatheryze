@@ -7,28 +7,18 @@ logs/
 
 # Environment variables
 .env
-.env.environment
-.env.production
-.env.test
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Build output
-dist/
-dist-ssr
-
 # Coverage reports
 coverage/
 
-# Temporary files
-.cache/
+# Build output
+dist/
 
 # Editor directories and files
 .vscode/
 .idea/
 .DS_Store
-
-# Vite cache
-vite.config.js

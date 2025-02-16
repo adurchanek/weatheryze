@@ -3,11 +3,26 @@ dotenv.config();
 
 import http from "http";
 import { Server as SocketIoServer } from "socket.io";
-import mongoose from "mongoose";
 import app from "./app.js";
+import { getParameter } from "./utils/getParameter.js";
 
 const server = http.createServer(app);
-const clientUrls = process.env.CLIENT_URLS.split(",");
+
+let clientUrls;
+
+let port;
+
+try {
+  const clientUrlsString = await getParameter(
+    "/weatheryze/prod/backend/CLIENT_URLS",
+  );
+  clientUrls = clientUrlsString.split(",");
+
+  port = await getParameter("/weatheryze/prod/backend/PORT");
+} catch (error) {
+  console.error("Error fetching env variables:", error);
+  process.exit(1);
+}
 
 // Initialize Socket.io
 const io = new SocketIoServer(server, {
@@ -29,15 +44,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB connected");
-    // Start the server after DB connection
-    const PORT = process.env.PORT || 5002;
-    server.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  })
-  .catch((err) => console.error(err));
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});

@@ -5,6 +5,7 @@ import {
   LocationSearchParams,
   LocationState,
 } from "../../types/location";
+import { getLocationServiceUrl } from "../../../config";
 
 const initialState: LocationState = {
   suggestions: {
@@ -25,7 +26,7 @@ export const fetchLocationsSuggestionsData = createAsyncThunk<
   async ({ query, limit }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get<Location[]>(
-        `/location/suggest?query=${encodeURIComponent(query)}&limit=${encodeURIComponent(
+        `/v1/${getLocationServiceUrl()}/location/suggest?query=${encodeURIComponent(query)}&limit=${encodeURIComponent(
           limit,
         )}`,
       );
@@ -48,7 +49,7 @@ export const fetchLocationByCoordinates = createAsyncThunk<
   async ({ latitude, longitude }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get<Location>(
-        `/location/coordinates?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(
+        `/v1/${getLocationServiceUrl()}/location/coordinates?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(
           longitude,
         )}`,
       );
@@ -68,7 +69,10 @@ const locationSlice = createSlice({
   initialState,
   reducers: {
     clearSelectedLocation(state) {
-      state.selectedLocation = null; // Clear selected location
+      state.selectedLocation = null;
+    },
+    clearLocationData(state) {
+      Object.assign(state, initialState);
     },
   },
   extraReducers: (builder) => {
@@ -106,6 +110,7 @@ const locationSlice = createSlice({
   },
 });
 
-export const { clearSelectedLocation } = locationSlice.actions;
+export const { clearSelectedLocation, clearLocationData } =
+  locationSlice.actions;
 
 export default locationSlice.reducer;

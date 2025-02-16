@@ -1,7 +1,10 @@
-import {
-  fetchLocation,
-  fetchLocationByCoordinates,
-} from "../services/locationService.js";
+import axios from "axios";
+import { sendLog } from "../utils/logging.js";
+
+const envlocationServiceUrl =
+  process.env.NODE_ENV === "production"
+    ? "location-service"
+    : "location-service";
 
 // @desc    Suggest locations
 // @route   GET /api/location/suggest
@@ -10,14 +13,39 @@ export const suggestLocations = async (req, res) => {
   const { query, limit = 5 } = req.query;
 
   if (!query) {
+    await sendLog("Missing search query in suggestLocations endpoint", "WARN");
     return res.status(400).json({ msg: "Search query is required" });
   }
 
   try {
-    const suggestedLocations = await fetchLocation(query);
-    const locations = suggestedLocations.slice(0, limit);
-    res.status(200).json(locations);
+    await sendLog(
+      `Received request for suggestLocations: query="${query}", limit=${limit}`,
+      "INFO",
+    );
+    const response = await axios.get(
+      `http://${envlocationServiceUrl}:5003/api/v1/location-service/location/suggest`,
+      {
+        params: { query, limit },
+      },
+    );
+    await sendLog(
+      `suggestLocations succeeded: query="${query}", returned ${
+        response.data.length
+      } locations`,
+      "INFO",
+    );
+
+    res.status(200).json(response.data);
   } catch (err) {
+    console.error("Error in suggestLocations:", err);
+    try {
+      await sendLog(
+        `Error in suggestLocations: query="${query}", error="${err.message}"`,
+        "ERROR",
+      );
+    } catch (logErr) {
+      console.error("Failed to send log to logging service:", logErr);
+    }
     res.status(500).send("Server error");
   }
 };
@@ -35,8 +63,14 @@ export const getLocationByCoordinates = async (req, res) => {
   }
 
   try {
-    const location = await fetchLocationByCoordinates(latitude, longitude);
-    res.status(200).json(location);
+    const response = await axios.get(
+      `http://${envlocationServiceUrl}:5003/api/v1/location-service/location/coordinates`,
+      {
+        params: { latitude, longitude },
+      },
+    );
+
+    res.status(200).json(response.data);
   } catch (err) {
     if (err.message === "Location not found") {
       return res.status(404).json({ msg: err.message });

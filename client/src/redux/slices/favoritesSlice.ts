@@ -11,16 +11,17 @@ const initialState: FavoritesState = {
 export const fetchFavorites = createAsyncThunk(
   "favorites/fetchFavorites",
   async () => {
-    const response =
-      await axiosInstance.get<FavoriteLocation[]>("/weather/favorites");
+    const response = await axiosInstance.get<FavoriteLocation[]>(
+      "/v1/backend-service/weather/favorites",
+    );
     return response.data;
   },
 );
 
 export const deleteFavorite = createAsyncThunk(
   "favorites/deleteFavorite",
-  async (id: string) => {
-    await axiosInstance.delete(`/weather/favorites/${id}`);
+  async (id: number) => {
+    await axiosInstance.delete(`/v1/backend-service/weather/favorites/${id}`);
     return id;
   },
 );
@@ -33,9 +34,12 @@ export const saveFavorite = createAsyncThunk<
   "favorites/saveFavorite",
   async ({ location }: SaveFavoriteParams, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/weather/favorites", {
-        location,
-      });
+      const response = await axiosInstance.post(
+        "/v1/backend-service/weather/favorites",
+        {
+          location,
+        },
+      );
       return response.data as FavoriteLocation;
     } catch (error: any) {
       return rejectWithValue(
@@ -66,9 +70,9 @@ const favoritesSlice = createSlice({
       })
       .addCase(
         deleteFavorite.fulfilled,
-        (state, action: PayloadAction<string>) => {
+        (state, action: PayloadAction<number>) => {
           if (state.data) {
-            state.data = state.data.filter((fav) => fav._id !== action.payload);
+            state.data = state.data.filter((fav) => fav.id !== action.payload);
           }
         },
       )

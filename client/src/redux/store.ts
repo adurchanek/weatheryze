@@ -5,6 +5,7 @@ import favoritesReducer from "./slices/favoritesSlice";
 import errorReducer from "./slices/errorSlice";
 import locationReducer from "./slices/locationSlice";
 import { setStore } from "../services/axiosInstance";
+import notificationsReducer from "./slices/notificationsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     favorites: favoritesReducer,
     error: errorReducer,
     location: locationReducer,
+    notifications: notificationsReducer,
   },
 });
 

@@ -1,42 +1,59 @@
 import { City, Country, State } from "country-state-city";
 
+// Precompute all data and lookup maps
+const allCities = City.getAllCities();
+const allStates = State.getAllStates();
+const allCountries = Country.getAllCountries();
+
+const countryMap = allCountries.reduce((acc, country) => {
+  acc[country.isoCode] = country.name;
+  return acc;
+}, {});
+
+const stateMap = allStates.reduce((acc, state) => {
+  acc[`${state.countryCode}-${state.isoCode}`] = state.name;
+  return acc;
+}, {});
+
+// Pre-enrich cities with state and country names
+const enrichedCities = allCities.map((city) => ({
+  ...city,
+  stateName: stateMap[`${city.countryCode}-${city.stateCode}`] || "",
+  countryName: countryMap[city.countryCode] || "",
+}));
+
 const fetchLocation = async (query) => {
   try {
-    // Fetch all cities, states, and countries
-    const allCities = City.getAllCities();
-    const allStates = State.getAllStates();
-    const allCountries = Country.getAllCountries();
+    const queryParts = query
+      .split(",")
+      .map((part) => part.trim().toLowerCase());
 
-    // Create lookup maps for countries and states
-    const countryMap = allCountries.reduce((acc, country) => {
-      acc[country.isoCode] = country.name;
-      return acc;
-    }, {});
+    const filteredCities = enrichedCities.filter((city) => {
+      const cityNameMatch = city.name.toLowerCase().includes(queryParts[0]);
+      let stateMatch = true;
+      let countryMatch = true;
 
-    const stateMap = allStates.reduce((acc, state) => {
-      acc[`${state.countryCode}-${state.isoCode}`] = state.name;
-      return acc;
-    }, {});
+      if (queryParts[1]) {
+        const stateQuery = queryParts[1];
+        stateMatch =
+          (city.stateName &&
+            city.stateName.toLowerCase().includes(stateQuery)) ||
+          (city.stateCode && city.stateCode.toLowerCase() === stateQuery);
+      }
 
-    // Filter cities based on the query
-    const filteredCities = allCities.filter((city) =>
-      city.name.toLowerCase().includes(query.toLowerCase()),
-    );
+      if (queryParts[2]) {
+        const countryQuery = queryParts[2];
+        countryMatch =
+          (city.countryName &&
+            city.countryName.toLowerCase().includes(countryQuery)) ||
+          (city.countryCode && city.countryCode.toLowerCase() === countryQuery);
+      }
+
+      return cityNameMatch && stateMatch && countryMatch;
+    });
 
     // Map the results to the desired format
-    const locations = filteredCities.map((city) => ({
-      latitude: parseFloat(city.latitude),
-      longitude: parseFloat(city.longitude),
-      name: city.name,
-      id: `${city.latitude},${city.longitude},${city.name}`,
-      country: countryMap[city.countryCode] || "Unknown Country",
-      countryCode: city.countryCode,
-      state: stateMap[`${city.countryCode}-${city.stateCode}`] || null,
-      stateCode: city.stateCode || null,
-      zip: null,
-    }));
-
-    return locations;
+    return filteredCities.map(formatLocation);
   } catch (error) {
     console.error("Error fetching locations:", error);
     throw new Error("Failed to fetch locations.");
@@ -45,9 +62,6 @@ const fetchLocation = async (query) => {
 
 const fetchLocationByCoordinates = async (latitude, longitude) => {
   try {
-    const allCities = City.getAllCities();
-
-    // Find the city that matches the given latitude and longitude
     const city = allCities.find(
       (city) =>
         parseFloat(city.latitude) === parseFloat(latitude) &&
@@ -58,32 +72,8 @@ const fetchLocationByCoordinates = async (latitude, longitude) => {
       throw new Error("Location not found");
     }
 
-    // Fetch all countries and states for lookup
-    const allStates = State.getAllStates();
-    const allCountries = Country.getAllCountries();
-
-    const countryMap = allCountries.reduce((acc, country) => {
-      acc[country.isoCode] = country.name;
-      return acc;
-    }, {});
-
-    const stateMap = allStates.reduce((acc, state) => {
-      acc[`${state.countryCode}-${state.isoCode}`] = state.name;
-      return acc;
-    }, {});
-
     // Return the location details
-    return {
-      latitude: parseFloat(city.latitude),
-      longitude: parseFloat(city.longitude),
-      name: city.name,
-      id: `${city.latitude},${city.longitude},${city.name}`,
-      country: countryMap[city.countryCode] || "Unknown Country",
-      countryCode: city.countryCode,
-      state: stateMap[`${city.countryCode}-${city.stateCode}`] || null,
-      stateCode: city.stateCode || null,
-      zip: null,
-    };
+    return formatLocation(city);
   } catch (error) {
     console.error("Error fetching location by coordinates:", error);
     throw new Error("Failed to fetch location by coordinates.");
@@ -91,3 +81,15 @@ const fetchLocationByCoordinates = async (latitude, longitude) => {
 };
 
 export { fetchLocationByCoordinates, fetchLocation };
+
+const formatLocation = (city) => ({
+  latitude: parseFloat(city.latitude),
+  longitude: parseFloat(city.longitude),
+  name: `${city.name}, ${city.countryCode === "US" ? city.stateCode : ""}${city.countryCode !== "US" ? city.countryCode : ""}`,
+  id: `${city.latitude},${city.longitude},${city.name},${city.stateCode},${city.countryCode}`,
+  country: countryMap[city.countryCode] || "Unknown Country",
+  countryCode: city.countryCode,
+  state: stateMap[`${city.countryCode}-${city.stateCode}`] || null,
+  stateCode: city.stateCode || null,
+  zip: null,
+});

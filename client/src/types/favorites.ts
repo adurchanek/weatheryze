@@ -1,10 +1,10 @@
 import { Location } from "./location";
 
 export interface FavoriteLocation {
-  _id: string;
-  id: string;
+  id: number;
   user: string;
   name: string;
+  locationId: string;
   latitude: number;
   longitude: number;
   country: string;
@@ -12,9 +12,8 @@ export interface FavoriteLocation {
   state: string | null;
   stateCode: string | null;
   zip: string | null;
-  date: string;
+  createdAt: string;
 }
-
 export interface FavoritesState {
   data: FavoriteLocation[] | null;
   status: "idle" | "loading" | "succeeded" | "failed";

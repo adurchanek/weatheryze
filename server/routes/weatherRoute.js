@@ -6,6 +6,13 @@ import {
   saveFavoriteLocation,
   getFavoriteLocations,
   deleteFavoriteLocation,
+  getPrecipitation,
+  getCurrentAirQuality,
+  getWindSpeed,
+  getWindData,
+  getDailyWeather,
+  getPrecipitationChanceData,
+  getConditionData,
 } from "../controllers/weatherController.js";
 import auth from "../middleware/auth.js"; // Authentication middleware
 
@@ -16,10 +23,43 @@ const router = express.Router();
 // @access  Public
 router.get("/current", getCurrentWeather);
 
+// @route   GET /api/weather/daily
+// @desc    Get daily weather data for a location
+// @access  Public
+router.get("/daily", getDailyWeather);
+
 // @route   GET /api/weather/forecast
 // @desc    Get forecast weather data for a location
 // @access  Public
 router.get("/forecast", getForecast);
+
+// @route   GET /api/weather/precipitation
+// @desc    Get precipitation data for a location
+// @access  Public
+router.get("/precipitation", getPrecipitation);
+
+// @route   GET /api/weather/windSpeed
+// @desc    Get wind speed data for a location
+// @access  Public
+router.get("/windspeed", getWindSpeed);
+
+// @route   GET /api/weather/wind
+// @desc    Get wind data for a location
+// @access  Public
+router.get("/wind", getWindData);
+
+// @route   GET /api/weather/precipitation-chance
+// @desc    Get precipitation chance data for a location
+// @access  Public
+router.get("/precipitation-chance", getPrecipitationChanceData);
+
+// @route   GET /api/weather/condition
+// @desc    Get condition data for a location
+// @access  Public
+router.get("/condition", getConditionData);
+
+// GET /api/weather/current-air-quality
+router.get("/current-air-quality", getCurrentAirQuality);
 
 router.post(
   "/favorites",

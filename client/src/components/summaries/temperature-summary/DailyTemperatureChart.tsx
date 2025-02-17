@@ -146,7 +146,7 @@ const CombinedCustomDot: React.FC<CombinedCustomDotProps> = (props) => {
             y1={cy - 2.75}
             x2={cx}
             y2={cy + 2.75}
-            stroke="#4ade80"
+            stroke="#5b5c5e"
             strokeWidth={1.75}
             strokeOpacity={1}
             strokeLinecap="round"
@@ -193,17 +193,6 @@ const CustomTimeLabel: React.FC<CustomTimeLabelProps> = (props) => {
     ${x},${arrowYPosition - 7}`}
         fill="#5b5c5e"
         opacity={0.85}
-      />
-
-      <line
-        x1={x}
-        x2={x}
-        y1={y - 15}
-        y2={y - 5}
-        stroke="#3D3D3D"
-        strokeWidth={1.2}
-        strokeDasharray="3 3"
-        opacity={0.0}
       />
     </g>
   );

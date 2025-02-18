@@ -53,6 +53,8 @@ const AppWithRouter: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (!isConfigLoaded) return;
+
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.has("code")) {
       const authCode = searchParams.get("code");
@@ -62,7 +64,7 @@ const AppWithRouter: React.FC = () => {
     } else {
       refreshUser();
     }
-  }, [location]);
+  }, [location, isConfigLoaded]);
 
   const getApiUrl = () => {
     if (import.meta.env.MODE === "development") {

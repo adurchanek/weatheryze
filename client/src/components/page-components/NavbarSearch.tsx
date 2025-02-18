@@ -261,26 +261,51 @@ const NavbarSearch: React.FC<NavbarSearchProps> = ({
                      `}
           />
 
-          {/* Search Button with Icon on Small Screens */}
-          {!isCollapsed && (
+          {!isCollapsed && isSmallScreen && (
             <button
-              type="submit"
-              className={`ml-2 text-sm sm:bg-blue-500 sm:text-white rounded-full px-3 py-1 sm:hover:bg-blue-600 transition flex items-center justify-center sm:duration-500 duration-300 ${!isCollapsed ? "text-gray-500" : "text-gray-800"}`}
+              type="button"
+              className="
+              p-2
+              text-gray-800
+              hover:text-gray-600
+              hover:bg-gray-100
+              rounded-full
+              transition
+              duration-300
+            "
               onClick={toggleCollapse}
             >
-              {!isCollapsed && (
-                <svg
-                  className="w-5 h-5 sm:hidden"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                  <line x1="6" y1="18" x2="18" y2="6" />
-                </svg>
-              )}
-              <span className="hidden sm:inline-block">Search</span>
+              {/* X icon for small screens */}
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <line x1="6" y1="6" x2="18" y2="18" />
+                <line x1="6" y1="18" x2="18" y2="6" />
+              </svg>
+            </button>
+          )}
+
+          {!isCollapsed && !isSmallScreen && (
+            <button
+              type="submit"
+              className="
+              ml-2
+              text-sm
+              bg-blue-500
+              text-white
+              rounded-full
+              px-3
+              py-1
+              hover:bg-blue-600
+              transition
+              duration-300
+            "
+            >
+              Search
             </button>
           )}
         </form>

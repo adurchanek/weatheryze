@@ -152,7 +152,7 @@ const WindDirectionChart: React.FC<WindDirectionChartProps> = ({
       >
         <XAxis
           dataKey="time"
-          interval={isSmallScreen ? 3 : 2}
+          interval={3}
           tickFormatter={(time) => {
             // Convert the original UTC timestamp to account for the timezone offset
             const utcTime = new Date(time).getTime();

@@ -25,6 +25,9 @@ const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const VerifyAccount = lazy(() => import("./pages/VerifyAccount"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const ContactUs = lazy(() => import("./pages/ContactUs"));
 const WindyMapPage = lazy(() => import("./pages/WindyMapPage"));
 const PrecipitationMapPage = lazy(() => import("./pages/PrecipitationMapPage"));
 
@@ -159,6 +162,9 @@ const AppWithRouter: React.FC = () => {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/verify-account" element={<VerifyAccount />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/contact" element={<ContactUs />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/favorites" element={<FavoritesPage />} />
               </Route>

@@ -319,7 +319,7 @@ const DailyTemperatureChart: React.FC<DailyTemperatureChartProps> = ({
 
         <XAxis
           dataKey="time"
-          interval={isSmallScreen ? 3 : 2}
+          interval={3}
           tickFormatter={(time) => {
             const utcTime = new Date(time).getTime();
             const correctedTime = utcTime - utcOffsetSeconds * 1000;
@@ -331,7 +331,7 @@ const DailyTemperatureChart: React.FC<DailyTemperatureChartProps> = ({
 
             return formatter.format(new Date(correctedTime));
           }}
-          tick={{ fill: "#555555", fontSize: isSmallScreen ? 10 : 12 }}
+          tick={{ fill: "#555555", fontSize: isSmallScreen ? 11 : 12 }}
           padding={{ left: 8, right: 0 }}
         />
 

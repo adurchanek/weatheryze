@@ -7,10 +7,10 @@ import errorReducer, {
   setError,
   clearError,
 } from "../../redux/slices/errorSlice";
-import ErrorNotification from "../ErrorNotification";
+import ErrorNotification from "../page-components/ErrorNotification";
 import { ErrorState } from "../../types/error";
 
-jest.setTimeout(6000); // Set global timeout to 10 seconds
+jest.setTimeout(6000); // Set global timeout to 6 seconds
 
 interface MinimalRootState {
   error: ErrorState;

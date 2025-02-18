@@ -57,7 +57,7 @@ interface SearchBarProps {
   debounceDelay?: number;
 }
 
-const SearchBar = ({ debounceDelay = 250 }: SearchBarProps) => {
+const SearchBar = ({ debounceDelay = 100 }: SearchBarProps) => {
   const [locationInput, setLocationInput] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 

@@ -95,12 +95,12 @@ const PrecipConditionSummary: React.FC<PrecipConditionSummaryProps> = ({
         </div>
 
         {/* Probability label */}
-        <span className="text-sm text-gray-700 font-medium text-center">
+        <span className="text-sm text-gray-700 font-medium text-center h-5">
           {(clampedChance * 100).toFixed(0)}%
         </span>
 
         {/* Explanation label */}
-        <span className="text-xs text-gray-500 text-center">
+        <span className="text-xs text-gray-500 text-center whitespace-nowrap overflow-hidden text-ellipsis">
           Chance of precipitation
         </span>
       </div>
@@ -110,14 +110,14 @@ const PrecipConditionSummary: React.FC<PrecipConditionSummaryProps> = ({
         <img
           src={iconSrc}
           alt={`${condition} icon`}
-          className="w-16 h-16 drop-shadow-sm"
+          className="w-14 h-14 drop-shadow-sm"
         />
         {/* Condition label */}
-        <span className="capitalize text-xs text-gray-700 font-medium  text-center">
+        <span className="capitalize text-xs text-gray-700 font-medium  text-center h-5">
           {condition}
         </span>
         {/* Explanation label */}
-        <span className="text-xs text-gray-500  text-center">
+        <span className="text-xs text-gray-500  text-center  whitespace-nowrap overflow-hidden text-ellipsis">
           Current conditions
         </span>
       </div>

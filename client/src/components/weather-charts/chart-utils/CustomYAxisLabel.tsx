@@ -1,8 +1,8 @@
 import React from "react";
 
 const CustomYAxisLabel = ({
-  x,
-  y,
+  x = 0,
+  y = 0,
   isTooltipEnabled,
   toggleTooltip,
   hideTooltip,

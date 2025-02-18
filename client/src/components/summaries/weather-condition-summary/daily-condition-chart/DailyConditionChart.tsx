@@ -167,7 +167,7 @@ const DailyConditionChart: React.FC<DailyConditionChartProps> = ({
             return formatter.format(new Date(correctedTime));
           }}
           interval={isSmallScreen ? 3 : 2}
-          tick={{ fill: "#555", fontSize: isSmallScreen ? 10 : 11 }}
+          tick={{ fill: "#555", fontSize: 10 }}
           padding={{ left: 15, right: 0 }}
         />
 

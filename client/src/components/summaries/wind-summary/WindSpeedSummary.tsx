@@ -79,7 +79,7 @@ const WindSpeedSummary: React.FC<WindSpeedSummaryProps> = ({
     <CollapsibleCard title="Today's Wind" highlightColor="blue-50">
       <div
         className="mx-auto max-w-full p-3 sm:p-5 bg-gradient-to-bl from-indigo-50 via-sky-50 to-purple-100 rounded-b-md shadow-sm drop-shadow border-b border-b-gray-300
-                       transition-shadow duration-300 relative mb-px"
+                       transition-shadow duration-300 relative mb-px md:h-[233px]"
       >
         <div className="w-48 h-48 mx-auto relative">
           {/* Directional labels, moved inward + smaller text */}

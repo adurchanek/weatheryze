@@ -47,8 +47,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const refreshUser = async () => {
     try {
-      console.log("Attempting to refresh user session...");
-
       const API_URL_REFRESH =
         import.meta.env.MODE === "development"
           ? "/api/v1/backend-service/auth/refresh"
@@ -109,7 +107,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           email: currentUser.signInDetails?.loginId ?? null,
         });
       } else {
-        console.warn("No valid session found, logging out...");
         setUser(null);
         setEmail(null);
         setAccessToken(null);

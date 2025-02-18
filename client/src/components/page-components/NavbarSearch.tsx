@@ -58,7 +58,7 @@ interface NavbarSearchProps {
 
 const NavbarSearch: React.FC<NavbarSearchProps> = ({
   onExpand,
-  debounceDelay = 250,
+  debounceDelay = 100,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);

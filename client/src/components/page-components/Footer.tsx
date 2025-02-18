@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom"; // Import Link from React Router
 
 const Footer: React.FC = () => {
   return (
@@ -9,24 +10,24 @@ const Footer: React.FC = () => {
           © {new Date().getFullYear()} Weatheryze. All rights reserved.
         </p>
         <div className="mt-2 flex justify-center space-x-6">
-          <a
-            href="#"
+          <Link
+            to="/privacy-policy"
             className="text-gray-600 hover:text-blue-500 transition duration-300"
           >
             Privacy Policy
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/terms-of-service"
             className="text-gray-600 hover:text-blue-500 transition duration-300"
           >
             Terms of Service
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/contact"
             className="text-gray-600 hover:text-blue-500 transition duration-300"
           >
             Contact Us
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

@@ -6,11 +6,11 @@ import {
   YAxis,
   ResponsiveContainer,
 } from "recharts";
-import ChartLoadingSkeleton from "../../skeletons/ChartLoadingSkeleton";
 import { DateTime } from "luxon";
 import { useScreenSize } from "../../../context/ScreenSizeContext";
 import { WindData } from "../../../types/weather";
 import WindArrow from "./WindArrow";
+import LoadingSkeleton from "../../skeletons/LoadingSkeleton";
 
 interface WindPoint {
   time: string;
@@ -31,7 +31,11 @@ const WindDirectionChart: React.FC<WindDirectionChartProps> = ({
   loadingStatus,
 }) => {
   if (!windData || loadingStatus === "loading" || loadingStatus === "idle") {
-    return <ChartLoadingSkeleton />;
+    return (
+      <div className="flex justify-center">
+        <LoadingSkeleton width={400} height={130} />
+      </div>
+    );
   }
 
   const { isSmallScreen } = useScreenSize();

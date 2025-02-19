@@ -85,7 +85,7 @@ const ConditionSummary: React.FC<ConditionSummaryProps> = ({
 
   return (
     <CollapsibleCard title="Today's Conditions" highlightColor="blue-50">
-      <div className="mt-0 space-y-2 bg-gradient-to-br from-indigo-50 via-sky-50 to-purple-50 ">
+      <div className="mb-1 space-y-2 bg-gradient-to-br from-indigo-50 via-sky-50 to-purple-50 ">
         <div className="bg-white px-4 py-2 rounded-b-lg shadow drop-shadow">
           {loadingStatus === "loading" || loadingStatus === "idle" ? (
             <div className="flex justify-center">
